@@ -111,10 +111,18 @@ public class AgenteRecopilador extends Agent {
             anadeDatosModelo(modelo, mensaje);
             // Envíar ok a Agente DM
             
-            if(datosRecibidos.get("DecisionTree").get(0).get(0) >= maxMensajesPorModelo)  //si ha recibido todos los mensajes para el DecisionTree -> envia
+            if(datosRecibidos.get("DecisionTree").get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
                 calculaMediaModelo("DecisionTree");
                 enviar_resultados("DecisionTree");
-            
+            }
+            else if(datosRecibidos.get("NaiveBayes").get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
+                calculaMediaModelo("NaiveBayes");
+                enviar_resultados("NaiveBayes");
+            }   
+             else if(datosRecibidos.get("MultyplayerPerceptrion").get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
+                calculaMediaModelo("MultyplayerPerceptrion");
+                enviar_resultados("MultyplayerPerceptrion");
+            }   
             
             if(contador == 0){
                 myAgent.doDelete();
