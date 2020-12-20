@@ -81,11 +81,6 @@ public class AgenteRecopilador extends Agent {
     public class Recopilar_behaviour extends CyclicBehaviour {
         
         
-        /// Definir una estructura de datos para las estadísticas
-        //Float estadisticas[][];
-        
-       
-        
         //Envía resultados al agente resultado correspondiente
         private void enviar_resultados(String modelo) {
                 String resultadoRecopiladorPorModelo = "modelo";  
