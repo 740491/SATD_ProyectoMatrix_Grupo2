@@ -28,7 +28,7 @@ import weka.gui.treevisualizer.PlaceNode2;
 import weka.gui.treevisualizer.TreeVisualizer;
 
 public class AgenteRecopilador extends Agent {
-    int contador= 15;
+    int contador= 4;
     String modelo;
     Integer maxMensajesPorModelo;
     String resRecopilador = "";
@@ -109,14 +109,17 @@ public class AgenteRecopilador extends Agent {
             if(datosRecibidos.get("DecisionTree").get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
                 calculaMediaModelo("DecisionTree");
                 enviar_resultados("DecisionTree");
+                contador-=1;
             }
             else if(datosRecibidos.get("NaiveBayes").get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
                 calculaMediaModelo("NaiveBayes");
                 enviar_resultados("NaiveBayes");
+                contador-=1;
             }   
              else if(datosRecibidos.get("MultyplayerPerceptrion").get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
                 calculaMediaModelo("MultyplayerPerceptrion");
                 enviar_resultados("MultyplayerPerceptrion");
+                contador-=1;
             }   
             
             if(contador == 0){
@@ -127,9 +130,10 @@ public class AgenteRecopilador extends Agent {
     /*Asignacion de comportamientos*/
     protected void setup() {
         
-        if(contador == 15)                  //la primera vez inicializa la estructura de datos
+        if(contador == 4){                  //la primera vez inicializa la estructura de datos
             this.inicializaDatosModelos();
-        
+            contador-=1;
+        }
         Object[] args = getArguments();
         modelo = args[0].toString();
         maxMensajesPorModelo = Integer.parseInt(args[1].toString());
