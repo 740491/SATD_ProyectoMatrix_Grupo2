@@ -90,15 +90,16 @@ public class AgenteRecopilador extends Agent {
                 resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(4)+","; //media %instancias incorrectamente clasificadas,
                 resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(5);     //mediaNumeroInstanciasIncorrectamenteClasificadas
               
-                ACLMessage resultado = new ACLMessage(ACLMessage.CONFIRM);//se define objeto de tipo mensaje
+                ACLMessage resultado = new ACLMessage(ACLMessage.REQUEST);//se define objeto de tipo mensaje
                 resultado.setContent(resultadoRecopiladorPorModelo);//se le añade el contenido al objeto de tipo mensaje
-                resultado.addReceiver(new AID("????????????", AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia
+                resultado.addReceiver(new AID("resultado-"+modelo, AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia
                 this.myAgent.send(resultado); //el agente actual envia el mensaje
         }
 
         public void action() {
             ACLMessage msg = this.myAgent.blockingReceive();//accede al agente que tenga la accion y lo bloquea para que solo quede esperando el mensaje
             String mensaje = msg.getContent();//recibimos el mensaje
+            String nombreAgente = msg.getSender().getName();
             
             //Calcular estadísticas
            
@@ -124,6 +125,10 @@ public class AgenteRecopilador extends Agent {
             if(contador == 0){
                 myAgent.doDelete();
             }
+           
+            ACLMessage resultado = new ACLMessage(ACLMessage.AGREE);//se define objeto de tipo mensaje
+            resultado.addReceiver(new AID(nombreAgente, AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia
+            this.myAgent.send(resultado); //el agente actual envia el mensaje
         }
     }
     /*Asignacion de comportamientos*/
@@ -156,7 +161,7 @@ public class AgenteRecopilador extends Agent {
         ArrayList<Double> mediasModelo = new ArrayList();  //cada posicion tiene la media de un parametro  - medias Finales para un modelo
         for(int i=0; i<6; i++){  // 6 parametros por los cuales tenemos que hacer la media
             int occurrences = datosRecibidos.get(modelo).get(i).get(0);
-            double suma = datosRecibidos.get(modelo).get(i).get(1);
+            double suma = datosRecibidos.get(modelo).get(i).get(1); 
             
             mediasModelo.set(i, suma/occurrences);
             //modelo, mediaPorcentajeParticion, mediaInstanciasClasificadas, media%instanciasCorrectamenteClasificadas, numeroInstanciasCorrectamenteClasificadas, 
