@@ -76,21 +76,20 @@ public class AgenteRecopilador extends Agent {
         datosRecibidos.put("MultyplayerPerceptrion", arrModelo);
     }
     
-    
-    
     public class Recopilar_behaviour extends CyclicBehaviour {
         
         
         //Envía resultados al agente resultado correspondiente
         private void enviar_resultados(String modelo) {
-                String resultadoRecopiladorPorModelo = "modelo";  
-                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(0)+",";
-                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(1)+",";
-                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(2)+",";
-                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(3)+",";
-                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(4)+",";
-                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(5);
-            
+                //FORMATO RESULTADO:
+                String resultadoRecopiladorPorModelo = modelo+",";  //modeloString,
+                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(0)+","; //mediaPorcentejeParticion,
+                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(1)+","; //media%instanciasClasificadas,
+                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(2)+","; //media%instanciasCorrectamenteClasificadas,
+                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(3)+","; //mediaNumeroInstanciasCorrectClasificadas,
+                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(4)+","; //media %instancias incorrectamente clasificadas,
+                resultadoRecopiladorPorModelo += mediasFinalesModelos.get(modelo).get(5);     //mediaNumeroInstanciasIncorrectamenteClasificadas
+              
                 ACLMessage resultado = new ACLMessage(ACLMessage.CONFIRM);//se define objeto de tipo mensaje
                 resultado.setContent(resultadoRecopiladorPorModelo);//se le añade el contenido al objeto de tipo mensaje
                 resultado.addReceiver(new AID("????????????", AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia
