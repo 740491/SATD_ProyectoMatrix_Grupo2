@@ -36,7 +36,8 @@ public class AgenteInit extends Agent {
                 for (int i=0; i< AgenteInit.NUM_EXEC;i++){
                     for (String cad:AgenteInit.modelos){
                         for (int porcentaje_modelo:AgenteInit.porcentajes){
-                            ac = cc.createNewAgent("dm-" + cad + "-" + porcentaje_modelo+ "-" + (i+1), "agentes.AgenteDM", null);
+                            Object argumentos[]= new String[]{cad, String.valueOf(porcentaje_modelo)};
+                            ac = cc.createNewAgent("dm-" + cad + "-" + porcentaje_modelo+ "-" + (i+1), "agentes.AgenteDM", argumentos);
                             ac.start();
                         }
                     }

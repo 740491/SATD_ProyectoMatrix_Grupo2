@@ -1,4 +1,3 @@
-
 package agentes;
 
 import jade.core.AID;
@@ -25,6 +24,9 @@ import weka.gui.treevisualizer.TreeVisualizer;
 
 public class AgenteDM extends Agent {
 
+    private String modelo;
+    private int porcentaje;
+
     public class aplicarClasificacion extends OneShotBehaviour {
 
         public void action() {
@@ -32,44 +34,102 @@ public class AgenteDM extends Agent {
             String mensaje = msg.getContent();//recibimos el mensaje
             StringReader sr = new StringReader(mensaje); // El mensaje tipo String lo convertimos a un StringReader
             BufferedReader br = new BufferedReader(sr); // el StringReader lo convertimos a un Buffer
+            
 
             try {
+                
                 Instances data = new Instances(br);//definimos un objeto que contendra los datos a clasificar
                 data.setClassIndex(data.numAttributes() - 1);//Seleccionamos cual sera el atributo clase
-                br.close();//cerramos el objeto buffer             
-                J48 j48 = new J48(); // Creamos un clasidicador J48
-                j48.buildClassifier(data);//creamos el clasificador  del J48 con los datos 
-                Evaluation evalJ48 = new Evaluation(data);//Creamos un objeto para la validacion del modelo con redBayesiana
-                /*Aplicamos el clasificador J48*/
-                evalJ48.crossValidateModel(j48, data, 10, new Random(1));//hacemos validacion cruzada con 10 campos, y el aleatorio                 
-                String resJ48 = "\nResultados Arbol de decision J48\n========\n";//Obtenemos resultados
+                //int seed = 1;
+                Random rnd = new Random();
+                data.randomize(rnd);  // revolvemos el data set antes de hacer el split
+                int trainSize = (int) Math.round(data.numInstances()*porcentaje/100);
+                int testSize = data.numInstances()-trainSize;
+                Instances entrenamiento = new Instances (data, 0, trainSize);
+                Instances test = new Instances (data, trainSize,testSize);
+                br.close();//cerramos el objeto buffer         
+                             
+                /*
+                resultado=
+                *[0] = porcentaje particion, 
+                * [1] = instancias clasificadas, 
+                * [2] = %instancias correctamente clasificadas, 
+                * [3] = numero instancias correctamente clasificadas, 
+                * [4] = %instancias incorrectamente clasificadas, 
+                * [5] = numero instancias incorrectamente clasificadas
+                */
+                ACLMessage agree = msg.createReply();
+                agree.setPerformative(ACLMessage.AGREE);
+                //agree.addReceiver(new AID(msg.getSender().getName(), AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia, recopilador
+                this.myAgent.send(agree);
+                String resultado=porcentaje+",";//Obtenemos resultados
+                if("J48".equals(modelo)){
+                    J48 j48 = new J48(); // Creamos un clasidicador J48
+                    j48.buildClassifier(entrenamiento);//creamos el clasificador  del J48 con los datos 
+                    Evaluation evalJ48 = new Evaluation(entrenamiento);//Creamos un objeto para la validacion del modelo con redBayesiana
+                    /*Aplicamos el clasificador J48*/
+                    evalJ48.crossValidateModel(j48, test, 10, new Random(1));//hacemos validacion cruzada con 10 campos, y el aleatorio    
 
-                resJ48 = resJ48 + ("# de instancias clasificadas " + (int) evalJ48.numInstances() + "\n");
-                resJ48 = resJ48 + ("% instancias correctamente clasificadas " + evalJ48.pctCorrect() + "\n");
-                resJ48 = resJ48 + ("# instancias correctamente clasificadas " + (int) evalJ48.correct() + "\n");
-                resJ48 = resJ48 + ("% instancias incorrectamente clasificadas " + evalJ48.pctIncorrect() + "\n");
-                resJ48 = resJ48 + ("# instancias incorrectamente clasificadas " + (int) evalJ48.incorrect() + "\n");
-                resJ48 = resJ48 + ("Media del error absoluto " + evalJ48.meanAbsoluteError() + "\n");
-                resJ48 = resJ48 + (evalJ48.toMatrixString("Matrix de confusion"));
+                    resultado = resultado + ((int) evalJ48.numInstances() + ",");
+                    resultado = resultado + (evalJ48.pctCorrect() + ",");
+                    resultado = resultado + ((int) evalJ48.correct() + ",");
+                    resultado = resultado + (evalJ48.pctIncorrect() + ",");
+                    resultado = resultado + ((int) evalJ48.incorrect());
+                }
+                else if("NaiveBayes".equals(modelo)){
+                    NaiveBayes naiveBayes = new NaiveBayes(); // Creamos un clasidicador Naive Bayes
+                    naiveBayes.buildClassifier(entrenamiento);//creamos el clasificador  del Naive Bayes con los datos 
+                    Evaluation evalNaiveBayes = new Evaluation(entrenamiento);//Creamos un objeto para la validacion del modelo con redBayesiana
+                    /*Aplicamos el clasificador NaiveBayes*/
+                    evalNaiveBayes.crossValidateModel(naiveBayes, test, 10, new Random(1));//hacemos validacion cruzada con 10 campos, y el aleatorio    
 
-              // Se grafica el arbol
-                final javax.swing.JFrame jf = new javax.swing.JFrame("Arbol de decision: J48");
-                jf.setSize(500, 400);
-                jf.getContentPane().setLayout(new BorderLayout());
-                TreeVisualizer tv = new TreeVisualizer(null, j48.graph(), new PlaceNode2());
-                jf.getContentPane().add(tv, BorderLayout.CENTER);
-                jf.addWindowListener(new java.awt.event.WindowAdapter() {
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        jf.dispose();
+                    resultado = resultado + ((int) evalNaiveBayes.numInstances() + ",");
+                    resultado = resultado + (evalNaiveBayes.pctCorrect() + ",");
+                    resultado = resultado + ((int) evalNaiveBayes.correct() + ",");
+                    resultado = resultado + (evalNaiveBayes.pctIncorrect() + ",");
+                    resultado = resultado + ((int) evalNaiveBayes.incorrect());
+                }
+                else if("MultilayerPerceptron".equals(modelo)){
+                    MultilayerPerceptron multilayerPerceptron = new MultilayerPerceptron(); // Creamos un clasidicador MultilayerPerceptron
+                    multilayerPerceptron.buildClassifier(entrenamiento);//creamos el clasificador  del MultilayerPerceptron con los datos 
+                    Evaluation evalMultilayerPerceptron = new Evaluation(entrenamiento);//Creamos un objeto para la validacion del modelo con MultilayerPerceptron
+                    /*Aplicamos el clasificador NaiveBayes*/
+                    evalMultilayerPerceptron.crossValidateModel(multilayerPerceptron, test, 10, new Random(1));//hacemos validacion cruzada con 10 campos, y el aleatorio    
+
+                    resultado = resultado + ((int) evalMultilayerPerceptron.numInstances() + ",");
+                    resultado = resultado + (evalMultilayerPerceptron.pctCorrect() + ",");
+                    resultado = resultado + ((int) evalMultilayerPerceptron.correct() + ",");
+                    resultado = resultado + (evalMultilayerPerceptron.pctIncorrect() + ",");
+                    resultado = resultado + ((int) evalMultilayerPerceptron.incorrect());
+                
+                }
+                ACLMessage inform = msg.createReply();
+                inform.setPerformative(ACLMessage.INFORM);
+                this.myAgent.send(inform);
+              
+                ACLMessage mensaje_resultado = new ACLMessage(ACLMessage.REQUEST);//se define objeto de tipo mensaje
+                mensaje_resultado.setContent(resultado);//se le añade el contenido al objeto de tipo mensaje
+                mensaje_resultado.addReceiver(new AID("recopilador-" + modelo, AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia, recopilador
+                this.myAgent.send(mensaje_resultado); //el agente actual envia el mensaje
+                
+                //esperar agree de recopilador
+                // while(not agree)
+                boolean recopilador_agree = false;
+                while(!recopilador_agree){
+                    ACLMessage respuesta = this.myAgent.blockingReceive();
+                    if(ACLMessage.AGREE == respuesta.getPerformative() ){
+                        recopilador_agree = true;
                     }
-                });
-
-                jf.setVisible(true);
-                tv.fitToScreen();
-                ACLMessage resultado = new ACLMessage(ACLMessage.CONFIRM);//se define objeto de tipo mensaje
-                resultado.setContent(resJ48);//se le añade el contenido al objeto de tipo mensaje
-                resultado.addReceiver(new AID("pantalla", AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia
-                this.myAgent.send(resultado); //el agente actual envia el mensaje
+                } //time out
+                // esperar inform
+                ACLMessage inform_respuesta = this.myAgent.blockingReceive();
+                boolean recopilador_inform = false;
+                while(!recopilador_inform){
+                    ACLMessage respuesta = this.myAgent.blockingReceive();
+                    if(ACLMessage.INFORM == respuesta.getPerformative() ){
+                        recopilador_inform = true;
+                    }
+                }
 
             } catch (Exception e) {
                 System.out.println("El error es" + e.getMessage());
@@ -83,5 +143,8 @@ public class AgenteDM extends Agent {
     protected void setup() {
         aplicarClasificacion cs = new aplicarClasificacion();
         this.addBehaviour(cs);
+        Object[] args = getArguments();
+        modelo = args[0].toString();
+        porcentaje = Integer.parseInt(args[1].toString());
     }
 }
