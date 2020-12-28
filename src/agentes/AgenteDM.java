@@ -23,6 +23,8 @@ import weka.gui.treevisualizer.TreeVisualizer;
 
 
 public class AgenteDM extends Agent {
+    
+    private static final long TIMEOUT = 7500;
 
     private String modelo;
     private int porcentaje;
@@ -115,18 +117,38 @@ public class AgenteDM extends Agent {
                 //esperar agree de recopilador
                 // while(not agree)
                 boolean recopilador_agree = false;
+                
                 while(!recopilador_agree){
-                    ACLMessage respuesta = this.myAgent.blockingReceive();
-                    if(ACLMessage.AGREE == respuesta.getPerformative() ){
+                    ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
+                    
+                    // Si salta timeout -> respuesta = null
+                    // Reenviar la petición (y no cambiar recopilador_agree)
+                    if(respuesta == null){
+                        this.myAgent.send(mensaje_resultado);
+                    }
+                    // Si la respuesta es un "agree" es lo que esperábamos
+                    // Salir del bucle (recopilador_agree = true)
+                    // Si no es un agree se ignora el mensaje
+                    else if(ACLMessage.AGREE == respuesta.getPerformative() ){
                         recopilador_agree = true;
                     }
-                } //time out
+                    
+                }
                 // esperar inform
-                ACLMessage inform_respuesta = this.myAgent.blockingReceive();
                 boolean recopilador_inform = false;
                 while(!recopilador_inform){
-                    ACLMessage respuesta = this.myAgent.blockingReceive();
-                    if(ACLMessage.INFORM == respuesta.getPerformative() ){
+                    ACLMessage inform_respuesta = this.myAgent.blockingReceive();
+                    
+                    // Si salta timeout -> inform_respuesta = null
+                    // Reenviar la petición (y no cambiar recopilador_inform)
+                    if(inform_respuesta == null){
+                        this.myAgent.send(mensaje_resultado);
+                    }
+                    
+                    // Si la respuesta es un "inform" es lo que esperábamos
+                    // Salir del bucle (recopilador_inform = true)
+                    // Si no es un inform se ignora el mensaje
+                    else if(ACLMessage.INFORM == inform_respuesta.getPerformative() ){
                         recopilador_inform = true;
                     }
                 }
