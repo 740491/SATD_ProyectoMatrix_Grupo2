@@ -32,6 +32,7 @@ public class AgenteDM extends Agent {
     public class aplicarClasificacion extends OneShotBehaviour {
 
         public void action() {
+                     
             ACLMessage msg = this.myAgent.blockingReceive();//accede al agente que tenga la accion y lo bloquea para que solo quede esperando el mensaje        
             String mensaje = msg.getContent();//recibimos el mensaje
             StringReader sr = new StringReader(mensaje); // El mensaje tipo String lo convertimos a un StringReader
@@ -125,12 +126,14 @@ public class AgenteDM extends Agent {
                     // Reenviar la petición (y no cambiar recopilador_agree)
                     if(respuesta == null){
                         this.myAgent.send(mensaje_resultado);
+                        System.out.println("SALTA TIMEOUT");
                     }
                     // Si la respuesta es un "agree" es lo que esperábamos
                     // Salir del bucle (recopilador_agree = true)
                     // Si no es un agree se ignora el mensaje
                     else if(ACLMessage.AGREE == respuesta.getPerformative() ){
                         recopilador_agree = true;
+                        System.out.println("RECIBIDO");
                     }
                     
                 }
