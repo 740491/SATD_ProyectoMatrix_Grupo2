@@ -24,7 +24,14 @@ public class JfrmAgenteResultado extends javax.swing.JFrame {
 
     
     public void mostrarResultado(String res){
-        jtxtAreaResultado.setText(res);
+         String[] resultados = res.split(",");
+         String resJfrm = "Modelo: " + resultados[0] +"\n"+
+                 "Instancias clasificadas: " + resultados[2] +"\n"+
+                 "%instancias correctamente clasificadas: " + resultados[3]+"\n"+
+                 "numero instancias correctamente clasificadas: " + resultados[4]+"\n"+
+                 "%instancias incorrectamente clasificadas: " + resultados[5]+"\n"+
+                 "numero instancias incorrectamente clasificadas: " + resultados[6];
+        jtxtAreaResultado.setText(resJfrm);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

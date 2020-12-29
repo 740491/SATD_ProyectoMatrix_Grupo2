@@ -11,7 +11,7 @@ import java.util.Arrays;
 import static java.lang.System.exit;
 
 public class AgenteInit extends Agent {
-    private static int NUM_EXEC= 5;
+    private static int NUM_EXEC= 1;
     private static final String[] modelos ={"J48","NaiveBayes","MultilayerPerceptron"};
     private static final int[] porcentajes ={30,50,80};
     public class Iniciar_Agentes extends OneShotBehaviour{

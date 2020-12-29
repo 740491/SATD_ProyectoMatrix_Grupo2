@@ -78,6 +78,9 @@ public class AgenteDM extends Agent {
                     resultado = resultado + ((int) evalJ48.correct() + ",");
                     resultado = resultado + (evalJ48.pctIncorrect() + ",");
                     resultado = resultado + ((int) evalJ48.incorrect());
+                    
+                    System.out.println(this.myAgent.getLocalName() + " " + resultado);
+                    System.out.println(this.myAgent.getLocalName() + " " + evalJ48.toMatrixString("Matrix"));
                 }
                 else if("NaiveBayes".equals(modelo)){
                     long startNaive =System.currentTimeMillis();
