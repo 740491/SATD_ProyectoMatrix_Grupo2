@@ -6,12 +6,14 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
+import java.util.Arrays;
+
 import static java.lang.System.exit;
 
 public class AgenteInit extends Agent {
     private static int NUM_EXEC= 5;
-    private static final String  modelos[]={"J48","NaiveBayes","MultilayerPerceptron"};
-    private static final int  porcentajes[]={30,50,80};
+    private static final String[] modelos ={"J48","NaiveBayes","MultilayerPerceptron"};
+    private static final int[] porcentajes ={30,50,80};
     public class Iniciar_Agentes extends OneShotBehaviour{
         public void action(){
             ContainerController cc = getContainerController();
@@ -42,7 +44,8 @@ public class AgenteInit extends Agent {
                         }
                     }
                 }
-                ac = cc.createNewAgent("archivo", "agentes.AgenteArchivo", null);
+                Object[] argumentos = new String[]{Integer.toString(AgenteInit.NUM_EXEC)};
+                ac = cc.createNewAgent("archivo", "agentes.AgenteArchivo", argumentos);
                 ac.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();
