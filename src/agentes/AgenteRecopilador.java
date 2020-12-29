@@ -32,10 +32,11 @@ public class AgenteRecopilador extends Agent {
     String modelo;
     Integer maxMensajesPorModelo;
     String resRecopilador = "";
-    String decisionTreeName = "DecisionTree";
-    String naiveBayesName = "NaiveBayes";
-    String multyplayerPerceptrionName = "MultyplayerPerceptrion";
+    static String J48 = "J48";
+    static String NaiveBayesName = "NaiveBayes";
+    static String MultyplayerPerceptrionName = "MultyplayerPerceptrion";
     
+    private static final long TIMEOUT = 7500;
     /***
     * keys del HashMap: DecisionThree, NaiveBayes, MultyplayerPerceptrion  -- rapresentan los modelos
     * cada modelo tiene un ArrayList:
@@ -71,9 +72,9 @@ public class AgenteRecopilador extends Agent {
             copia.add(0);
             arrModelo.add(copia);
         }
-        datosRecibidos.put("DecisionTree", arrModelo);
-        datosRecibidos.put("NaiveBayes", arrModelo);
-        datosRecibidos.put("MultyplayerPerceptrion", arrModelo);
+        datosRecibidos.put(J48, arrModelo);
+        datosRecibidos.put(NaiveBayesName, arrModelo);
+        datosRecibidos.put(MultyplayerPerceptrionName, arrModelo);
     }
     
     public class Recopilar_behaviour extends CyclicBehaviour {
@@ -94,8 +95,55 @@ public class AgenteRecopilador extends Agent {
                 resultado.setContent(resultadoRecopiladorPorModelo);//se le añade el contenido al objeto de tipo mensaje
                 resultado.addReceiver(new AID("resultado-"+modelo, AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia
                 this.myAgent.send(resultado); //el agente actual envia el mensaje
+                try{
+                    //esperar agree de resultado
+                    // while(not agree)
+                    boolean resultado_agree = false;
+                    while(!resultado_agree){
+                        ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
+
+                        // Si salta timeout -> respuesta = null
+                        // Reenviar la petición (y no cambiar resultado_agree)
+                        if(respuesta == null){
+                            this.myAgent.send(resultado);
+                            System.out.println("SALTA TIMEOUT - agree");
+                        }
+                        // Si la respuesta es un "agree" es lo que esperábamos
+                        // Salir del bucle (resultado_agree = true)
+                        // Si no es un agree se ignora el mensaje
+                        else if(ACLMessage.AGREE == respuesta.getPerformative() ){
+                            resultado_agree = true;
+                            System.out.println("RECIBIDO AGREE");
+                        }
+
+                    }
+
+                     // esperar inform
+                    boolean resultado_inform = false;
+                    while(!resultado_inform){
+                        ACLMessage inform_respuesta = this.myAgent.blockingReceive(TIMEOUT);
+
+                        // Si salta timeout -> inform_respuesta = null
+                        // Reenviar la petición (y no cambiar resultado_inform)
+                        if(inform_respuesta == null){
+                            this.myAgent.send(resultado);
+                            System.out.println("SALTA TIMEOUT - inform");
+                        }
+
+                        // Si la respuesta es un "inform" es lo que esperábamos
+                        // Salir del bucle (recopilador_inform = true)
+                        // Si no es un inform se ignora el mensaje
+                        else if(ACLMessage.INFORM == inform_respuesta.getPerformative() ){
+                            resultado_inform = true;
+                            System.out.println("RECIBIDO INFORM");
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("El error es" + e.getMessage());               
+                }    
         }
 
+        @Override
         public void action() {
             ACLMessage msg = this.myAgent.blockingReceive();//accede al agente que tenga la accion y lo bloquea para que solo quede esperando el mensaje
             String mensaje = msg.getContent();//recibimos el mensaje
@@ -104,34 +152,44 @@ public class AgenteRecopilador extends Agent {
             //Calcular estadísticas
            
             anadeDatosModelo(modelo, mensaje);
-            // Envíar ok a Agente DM
+            // Envíar agree a Agente DM           
+            ACLMessage agree = msg.createReply();
+            agree.setPerformative(ACLMessage.AGREE);
+            //agree.addReceiver(new AID(msg.getSender().getName(), AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia, recopilador
+            this.myAgent.send(agree);
             
-            if(datosRecibidos.get("DecisionTree").get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
-                calculaMediaModelo("DecisionTree");
-                enviar_resultados("DecisionTree");
+            // Envíar inform a Agente DM           
+            ACLMessage inform = msg.createReply();
+            inform.setPerformative(ACLMessage.INFORM);
+            this.myAgent.send(inform);
+            
+            
+            if(datosRecibidos.get(J48).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
+                calculaMediaModelo(J48);
+                enviar_resultados(J48);
                 contador-=1;
             }
-            else if(datosRecibidos.get("NaiveBayes").get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
-                calculaMediaModelo("NaiveBayes");
-                enviar_resultados("NaiveBayes");
+            else if(datosRecibidos.get(NaiveBayesName).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
+                calculaMediaModelo(NaiveBayesName);
+                enviar_resultados(NaiveBayesName);
                 contador-=1;
             }   
-             else if(datosRecibidos.get("MultyplayerPerceptrion").get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
-                calculaMediaModelo("MultyplayerPerceptrion");
-                enviar_resultados("MultyplayerPerceptrion");
+             else if(datosRecibidos.get(MultyplayerPerceptrionName).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
+                calculaMediaModelo(MultyplayerPerceptrionName);
+                enviar_resultados(MultyplayerPerceptrionName);
                 contador-=1;
             }   
+    
             
+            
+         
             if(contador == 0){
                 myAgent.doDelete();
             }
-           
-            ACLMessage resultado = new ACLMessage(ACLMessage.AGREE);//se define objeto de tipo mensaje
-            resultado.addReceiver(new AID(nombreAgente, AID.ISLOCALNAME));//AID= Agent identification, se le añade a quien se le envia
-            this.myAgent.send(resultado); //el agente actual envia el mensaje
         }
     }
     /*Asignacion de comportamientos*/
+    @Override
     protected void setup() {
         
         if(contador == 4){                  //la primera vez inicializa la estructura de datos
