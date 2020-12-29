@@ -20,9 +20,27 @@ public class AgenteResultado extends GuiAgent {
 
         public void action() {
             ACLMessage msg = this.myAgent.blockingReceive();//accede al agente que tenga la accion y lo bloquea para que solo quede esperando el mensaje                  
+               
+            boolean recopilador_request = false;
+            while(!recopilador_request){
+                if(ACLMessage.REQUEST == msg.getPerformative() ){
+                    recopilador_request = true;
+                }
+                else{
+                    msg = this.myAgent.blockingReceive();
+                }
+                
+            }
+            ACLMessage agree = msg.createReply();
+            agree.setPerformative(ACLMessage.AGREE);
+            this.myAgent.send(agree);
             vres.setVisible(true);//solo se muestra la interfaz cuando se ha recibo el mensaje
             String mensaje = msg.getContent();//Obtenemos el resultado
             vres.mostrarResultado(mensaje); //se llama la funcion mostrar resultado que se encuentra en el Jfrm
+            
+            ACLMessage inform = msg.createReply();
+            inform.setPerformative(ACLMessage.INFORM);
+            this.myAgent.send(inform);
         }
     }
 
