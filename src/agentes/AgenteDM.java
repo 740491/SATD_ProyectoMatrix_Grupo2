@@ -140,7 +140,7 @@ public class AgenteDM extends Agent {
                 // esperar inform
                 boolean recopilador_inform = false;
                 while(!recopilador_inform){
-                    ACLMessage inform_respuesta = this.myAgent.blockingReceive();
+                    ACLMessage inform_respuesta = this.myAgent.blockingReceive(TIMEOUT);
                     
                     // Si salta timeout -> inform_respuesta = null
                     // Reenviar la petición (y no cambiar recopilador_inform)
