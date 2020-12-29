@@ -80,31 +80,34 @@ public class AgenteDM extends Agent {
                     resultado = resultado + ((int) evalJ48.incorrect());
                 }
                 else if("NaiveBayes".equals(modelo)){
+                    long startNaive =System.currentTimeMillis();
                     NaiveBayes naiveBayes = new NaiveBayes(); // Creamos un clasidicador Naive Bayes
                     naiveBayes.buildClassifier(entrenamiento);//creamos el clasificador  del Naive Bayes con los datos 
                     Evaluation evalNaiveBayes = new Evaluation(entrenamiento);//Creamos un objeto para la validacion del modelo con redBayesiana
                     /*Aplicamos el clasificador NaiveBayes*/
-                    evalNaiveBayes.crossValidateModel(naiveBayes, test, 10, new Random(1));//hacemos validacion cruzada con 10 campos, y el aleatorio    
-
+                    evalNaiveBayes.crossValidateModel(naiveBayes, test, 10, new Random(1));//hacemos validacion cruzada con 10 campos, y el aleatorio
+                    long endNaive = System.currentTimeMillis();
                     resultado = resultado + ((int) evalNaiveBayes.numInstances() + ",");
                     resultado = resultado + (evalNaiveBayes.pctCorrect() + ",");
                     resultado = resultado + ((int) evalNaiveBayes.correct() + ",");
                     resultado = resultado + (evalNaiveBayes.pctIncorrect() + ",");
                     resultado = resultado + ((int) evalNaiveBayes.incorrect());
+                    System.out.println("Acabé NaiveBayes "+ (endNaive-startNaive));
                 }
                 else if("MultilayerPerceptron".equals(modelo)){
+                    long startMultilayer =System.currentTimeMillis();
                     MultilayerPerceptron multilayerPerceptron = new MultilayerPerceptron(); // Creamos un clasidicador MultilayerPerceptron
                     multilayerPerceptron.buildClassifier(entrenamiento);//creamos el clasificador  del MultilayerPerceptron con los datos 
                     Evaluation evalMultilayerPerceptron = new Evaluation(entrenamiento);//Creamos un objeto para la validacion del modelo con MultilayerPerceptron
                     /*Aplicamos el clasificador NaiveBayes*/
                     evalMultilayerPerceptron.crossValidateModel(multilayerPerceptron, test, 10, new Random(1));//hacemos validacion cruzada con 10 campos, y el aleatorio    
-
+                    long endMultilayer =System.currentTimeMillis();
                     resultado = resultado + ((int) evalMultilayerPerceptron.numInstances() + ",");
                     resultado = resultado + (evalMultilayerPerceptron.pctCorrect() + ",");
                     resultado = resultado + ((int) evalMultilayerPerceptron.correct() + ",");
                     resultado = resultado + (evalMultilayerPerceptron.pctIncorrect() + ",");
                     resultado = resultado + ((int) evalMultilayerPerceptron.incorrect());
-                
+                    System.out.println("Acabé Multilayer "+ (endMultilayer-startMultilayer));
                 }
                 ACLMessage inform = msg.createReply();
                 inform.setPerformative(ACLMessage.INFORM);
@@ -126,14 +129,14 @@ public class AgenteDM extends Agent {
                     // Reenviar la petición (y no cambiar recopilador_agree)
                     if(respuesta == null){
                         this.myAgent.send(mensaje_resultado);
-                        System.out.println("SALTA TIMEOUT");
+                        System.out.println("SALTA TIMEOUT-DM " + this.myAgent.getLocalName());
                     }
                     // Si la respuesta es un "agree" es lo que esperábamos
                     // Salir del bucle (recopilador_agree = true)
                     // Si no es un agree se ignora el mensaje
                     else if(ACLMessage.AGREE == respuesta.getPerformative() ){
                         recopilador_agree = true;
-                        System.out.println("RECIBIDO");
+                        System.out.println("RECIBIDO-DM "  + this.myAgent.getLocalName());
                     }
                     
                 }

@@ -31,7 +31,7 @@ public class AgenteInit extends Agent {
                 for (String cad:AgenteInit.modelos){
                     ac = cc.createNewAgent("resultado-" + cad, "agentes.AgenteResultado", null);
                     ac.start();
-                    Object argumentos[]= new String[]{cad, String.valueOf(AgenteInit.NUM_EXEC)};
+                    Object argumentos[]= new String[]{cad, String.valueOf(AgenteInit.NUM_EXEC*AgenteInit.modelos.length)};
                     ac = cc.createNewAgent("recopilador-" + cad, "agentes.AgenteRecopilador", argumentos);
                     ac.start();
                 }

@@ -27,18 +27,21 @@ public class AgenteArchivo extends GuiAgent {
     /*Evento llamado desde la interfaz grafica*/
     @Override
     protected void onGuiEvent(GuiEvent ge) {
+        sendMessages();
 
-        ACLMessage msg = new ACLMessage(ACLMessage.CONFIRM);//se define objeto de tipo mensaje
+    }
+    public void sendMessages() {
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);//se define objeto de tipo mensaje
 
         try {
             String ruta = vfile.obtenerRuta();
             System.out.println(ruta);
             file = new BufferedReader(new FileReader(ruta)); //Se lee el archivo
             msg.setContent(convertir(file));//se le añade el contenido al objeto de tipo mensaje, convirtiendo el Buffer en un String
-            for (int i=0; i< AgenteArchivo.NUM_EXEC;i++){
-                for (String cad:AgenteArchivo.modelos){
-                    for (int porcentaje_modelo:AgenteArchivo.porcentajes){
-                        msg.addReceiver(new AID("dm-" + cad + "-" + porcentaje_modelo+ "-" + (i+1), AID.ISLOCALNAME));
+            for (int i = 0; i < AgenteArchivo.NUM_EXEC; i++) {
+                for (String cad : AgenteArchivo.modelos) {
+                    for (int porcentaje_modelo : AgenteArchivo.porcentajes) {
+                        msg.addReceiver(new AID("dm-" + cad + "-" + porcentaje_modelo + "-" + (i + 1), AID.ISLOCALNAME));
                         send(msg); //el agente actual envia el mensaje
                     }
                 }
@@ -48,7 +51,6 @@ public class AgenteArchivo extends GuiAgent {
             Logger.getLogger(AgenteArchivo.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(vfile, ex.getMessage());
         }
-
     }
     /*
      * Convierte un elemento Buffer a un String y lo retorna

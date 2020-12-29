@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
-import javafx.util.Pair;
+//import javafx.util.Pair;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import weka.associations.Apriori;
@@ -34,7 +34,7 @@ public class AgenteRecopilador extends Agent {
     String resRecopilador = "";
     static String J48 = "J48";
     static String NaiveBayesName = "NaiveBayes";
-    static String MultyplayerPerceptrionName = "MultyplayerPerceptrion";
+    static String MultilayerPerceptronName = "MultilayerPerceptron";
     
     private static final long TIMEOUT = 7500;
     /***
@@ -74,7 +74,7 @@ public class AgenteRecopilador extends Agent {
         }
         datosRecibidos.put(J48, arrModelo);
         datosRecibidos.put(NaiveBayesName, arrModelo);
-        datosRecibidos.put(MultyplayerPerceptrionName, arrModelo);
+        datosRecibidos.put(MultilayerPerceptronName, arrModelo);
     }
     
     public class Recopilar_behaviour extends CyclicBehaviour {
@@ -162,28 +162,28 @@ public class AgenteRecopilador extends Agent {
             ACLMessage inform = msg.createReply();
             inform.setPerformative(ACLMessage.INFORM);
             this.myAgent.send(inform);
-            
-            
-            if(datosRecibidos.get(J48).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
+            System.out.println(this.myAgent.getLocalName());
+            System.out.println(datosRecibidos.get(J48));
+            System.out.println(datosRecibidos.get(NaiveBayesName));
+            System.out.println(datosRecibidos.get(MultilayerPerceptronName));
+            /*if(datosRecibidos.get(J48).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
                 calculaMediaModelo(J48);
                 enviar_resultados(J48);
-                contador-=1;
+                myAgent.doDelete();
             }
             else if(datosRecibidos.get(NaiveBayesName).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
                 calculaMediaModelo(NaiveBayesName);
                 enviar_resultados(NaiveBayesName);
-                contador-=1;
+                myAgent.doDelete();
             }   
-             else if(datosRecibidos.get(MultyplayerPerceptrionName).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
-                calculaMediaModelo(MultyplayerPerceptrionName);
-                enviar_resultados(MultyplayerPerceptrionName);
-                contador-=1;
-            }   
-    
-            
-            
-         
-            if(contador == 0){
+             else if(datosRecibidos.get(MultilayerPerceptronName).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
+                calculaMediaModelo(MultilayerPerceptronName);
+                enviar_resultados(MultilayerPerceptronName);
+                myAgent.doDelete();
+            }*/
+            if(datosRecibidos.get(modelo).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
+                calculaMediaModelo(modelo);
+                enviar_resultados(modelo);
                 myAgent.doDelete();
             }
         }
@@ -204,15 +204,16 @@ public class AgenteRecopilador extends Agent {
     }
     private synchronized void anadeDatosModelo(String modelo, String mensaje) {
         String[] parametros = mensaje.split(",");
+        System.out.println(modelo+ " " +mensaje);
         
         for(int i=0; i<6; i++){  // 6 parametros por los cuales tenemos que hacer la media
-            //example "DecisionThree" -> 
+            //example "DecisionThree" ->
             int occurrences = datosRecibidos.get(modelo).get(i).get(0);
             int suma = datosRecibidos.get(modelo).get(i).get(1);
             datosRecibidos.get(modelo).get(i).set(0, occurrences + 1 );
-            datosRecibidos.get(modelo).get(i).set(1, suma + Integer.parseInt(parametros[i]));
+            datosRecibidos.get(modelo).get(i).set(1, suma + (int) Double.parseDouble(parametros[i]));
         }
-        String stringMatrix = parametros[6];
+        //String stringMatrix = parametros[6];
 
     }
     private void calculaMediaModelo(String modelo){
@@ -221,7 +222,8 @@ public class AgenteRecopilador extends Agent {
             int occurrences = datosRecibidos.get(modelo).get(i).get(0);
             double suma = datosRecibidos.get(modelo).get(i).get(1); 
             
-            mediasModelo.set(i, suma/occurrences);
+            //mediasModelo.set(i, suma/occurrences);
+            mediasModelo.add(i, suma/occurrences);
             //modelo, mediaPorcentajeParticion, mediaInstanciasClasificadas, media%instanciasCorrectamenteClasificadas, numeroInstanciasCorrectamenteClasificadas, 
             //media%instanciasIncorrectamenteClasificadas, mediaInstanciasIncorrectamenteClasificadas 
         }
