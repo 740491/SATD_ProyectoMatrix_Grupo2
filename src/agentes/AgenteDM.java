@@ -67,20 +67,22 @@ public class AgenteDM extends Agent {
                 this.myAgent.send(agree);
                 String resultado=porcentaje+",";//Obtenemos resultados
                 if("J48".equals(modelo)){
+                    long startJ48 =System.currentTimeMillis();
                     J48 j48 = new J48(); // Creamos un clasidicador J48
                     j48.buildClassifier(entrenamiento);//creamos el clasificador  del J48 con los datos 
                     Evaluation evalJ48 = new Evaluation(entrenamiento);//Creamos un objeto para la validacion del modelo con redBayesiana
                     /*Aplicamos el clasificador J48*/
-                    evalJ48.crossValidateModel(j48, test, 10, new Random(1));//hacemos validacion cruzada con 10 campos, y el aleatorio    
-
+                    evalJ48.crossValidateModel(j48, test, 10, new Random(1));//hacemos validacion cruzada con 10 campos, y el aleatorio
+                    long endJ48 =System.currentTimeMillis();
                     resultado = resultado + ((int) evalJ48.numInstances() + ",");
                     resultado = resultado + (evalJ48.pctCorrect() + ",");
                     resultado = resultado + ((int) evalJ48.correct() + ",");
                     resultado = resultado + (evalJ48.pctIncorrect() + ",");
                     resultado = resultado + ((int) evalJ48.incorrect());
                     
-                    System.out.println(this.myAgent.getLocalName() + " " + resultado);
-                    System.out.println(this.myAgent.getLocalName() + " " + evalJ48.toMatrixString("Matrix"));
+                    System.out.println(this.myAgent.getLocalName() + " %Clasificado correctamente: " + evalJ48.pctCorrect() + " Tiempo" +
+                            " de ejecución: "+ (endJ48-startJ48) + " ms" );
+                    //System.out.println(this.myAgent.getLocalName() + " " + evalJ48.toMatrixString("Matrix"));
                 }
                 else if("NaiveBayes".equals(modelo)){
                     long startNaive =System.currentTimeMillis();
@@ -95,7 +97,8 @@ public class AgenteDM extends Agent {
                     resultado = resultado + ((int) evalNaiveBayes.correct() + ",");
                     resultado = resultado + (evalNaiveBayes.pctIncorrect() + ",");
                     resultado = resultado + ((int) evalNaiveBayes.incorrect());
-                    System.out.println("Acabé NaiveBayes "+ (endNaive-startNaive));
+                    System.out.println(this.myAgent.getLocalName() + " %Clasificado correctamente: " + evalNaiveBayes.pctCorrect() + " Tiempo" +
+                            " de ejecución: "+ (endNaive-startNaive) + " ms" );
                 }
                 else if("MultilayerPerceptron".equals(modelo)){
                     long startMultilayer =System.currentTimeMillis();
@@ -110,7 +113,8 @@ public class AgenteDM extends Agent {
                     resultado = resultado + ((int) evalMultilayerPerceptron.correct() + ",");
                     resultado = resultado + (evalMultilayerPerceptron.pctIncorrect() + ",");
                     resultado = resultado + ((int) evalMultilayerPerceptron.incorrect());
-                    System.out.println("Acabé Multilayer "+ (endMultilayer-startMultilayer));
+                    System.out.println(this.myAgent.getLocalName() + " %Clasificado correctamente: " + evalMultilayerPerceptron.pctCorrect() + " Tiempo" +
+                            " de ejecución: "+ (endMultilayer-startMultilayer) + " ms");
                 }
                 ACLMessage inform = msg.createReply();
                 inform.setPerformative(ACLMessage.INFORM);
@@ -139,7 +143,7 @@ public class AgenteDM extends Agent {
                     // Si no es un agree se ignora el mensaje
                     else if(ACLMessage.AGREE == respuesta.getPerformative() ){
                         recopilador_agree = true;
-                        System.out.println("RECIBIDO-DM "  + this.myAgent.getLocalName());
+                        //System.out.println("RECIBIDO-DM "  + this.myAgent.getLocalName());
                     }
                     
                 }

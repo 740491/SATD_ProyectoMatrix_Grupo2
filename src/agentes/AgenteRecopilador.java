@@ -113,7 +113,7 @@ public class AgenteRecopilador extends Agent {
                         // Si no es un agree se ignora el mensaje
                         else if(ACLMessage.AGREE == respuesta.getPerformative() ){
                             resultado_agree = true;
-                            System.out.println("RECIBIDO AGREE");
+                            //System.out.println("RECIBIDO AGREE");
                         }
 
                     }
@@ -135,7 +135,7 @@ public class AgenteRecopilador extends Agent {
                         // Si no es un inform se ignora el mensaje
                         else if(ACLMessage.INFORM == inform_respuesta.getPerformative() ){
                             resultado_inform = true;
-                            System.out.println("RECIBIDO INFORM");
+                            //System.out.println("RECIBIDO INFORM");
                         }
                     }
                 } catch (Exception e) {
@@ -162,10 +162,6 @@ public class AgenteRecopilador extends Agent {
             ACLMessage inform = msg.createReply();
             inform.setPerformative(ACLMessage.INFORM);
             this.myAgent.send(inform);
-            System.out.println(this.myAgent.getLocalName());
-            System.out.println(datosRecibidos.get(J48));
-            System.out.println(datosRecibidos.get(NaiveBayesName));
-            System.out.println(datosRecibidos.get(MultilayerPerceptronName));
             /*if(datosRecibidos.get(J48).get(0).get(0) >= maxMensajesPorModelo){  //si ha recibido todos los mensajes para el DecisionTree -> envia
                 calculaMediaModelo(J48);
                 enviar_resultados(J48);
@@ -204,7 +200,7 @@ public class AgenteRecopilador extends Agent {
     }
     private synchronized void anadeDatosModelo(String modelo, String mensaje) {
         String[] parametros = mensaje.split(",");
-        System.out.println(modelo+ " " +mensaje);
+        //System.out.println(modelo+ " " +mensaje);
         
         for(int i=0; i<6; i++){  // 6 parametros por los cuales tenemos que hacer la media
             //example "DecisionThree" ->
