@@ -5,7 +5,9 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -30,20 +32,26 @@ import weka.gui.treevisualizer.TreeVisualizer;
 public class AgenteArquitecto extends Agent {
    
     
-    public class Recopilar_behaviour extends CyclicBehaviour {        
+    /*public class Recopilar_behaviour extends CyclicBehaviour {        
 
         @Override
         public void action() {
             
         }
-    }
+    }*/
+    
     /*Asignacion de comportamientos*/
     @Override
     protected void setup() {
         
         Object[] args = getArguments();
+        
+        System.out.println("Arquitecto "+ getLocalName()+" creado");
+        MessageTemplate protocolo = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_QUERY);// Crear un MessageTemplate de tipo FIPA_REQUEST;
+        MessageTemplate performativa = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);// Asignar una Performativa de tipo REQUEST al objeto MessageTemplate
+        MessageTemplate plantilla = MessageTemplate.and(protocolo,performativa); //Componer Plantilla con las anteriores
               
-        this.addBehaviour(new Recopilar_behaviour());
+        this.addBehaviour(new AgenteArquitectoManejador(this, plantilla));
     }
     
     @Override
