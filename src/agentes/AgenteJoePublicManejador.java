@@ -24,10 +24,10 @@ public class AgenteJoePublicManejador extends AchieveREResponder {
     }
     
     
-    protected ACLMessage handleRequest(ACLMessage request) throws NotUnderstoodException, RefuseException {
+    /*protected ACLMessage handleRequest(ACLMessage request) throws NotUnderstoodException, RefuseException {
     }
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
-    }
+    }*/
     
     protected void handleAgree(ACLMessage agree) {
     

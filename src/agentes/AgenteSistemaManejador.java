@@ -23,10 +23,10 @@ public class AgenteSistemaManejador extends AchieveREResponder {
         super(a, plantilla);
     }
     
-    protected ACLMessage handleRequest(ACLMessage request) throws NotUnderstoodException, RefuseException {
+    /*protected ACLMessage handleRequest(ACLMessage request) throws NotUnderstoodException, RefuseException {
     }
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
-    }
+    }*/
     
     protected void handleAgree(ACLMessage agree) {
     

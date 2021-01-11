@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 //import javafx.util.Pair;
@@ -30,7 +31,22 @@ import weka.gui.treevisualizer.PlaceNode2;
 import weka.gui.treevisualizer.TreeVisualizer;
 
 public class AgenteArquitecto extends Agent {
+    
+    enum tipoAgente{
+        RESISTENCIA,
+        SISTEMA,
+        JOEPUBLIC
+    }
+    
+    public class Agente{
+        tipoAgente tipo;
+        String nombre;
+        int bonus;
+    }
    
+    List<Agente> agentesResistencia;
+    List<Agente> agentesSistema;
+    List<Agente> agentesJoePublic;
     
     /*public class Recopilar_behaviour extends CyclicBehaviour {        
 
@@ -44,9 +60,24 @@ public class AgenteArquitecto extends Agent {
     @Override
     protected void setup() {
         
+        System.out.println("Arquitecto "+ getLocalName()+" creado");
+        
+        agentesResistencia = new ArrayList();
+        agentesSistema = new ArrayList();
+        agentesJoePublic = new ArrayList();
+        
         Object[] args = getArguments();
         
-        System.out.println("Arquitecto "+ getLocalName()+" creado");
+        /*
+            args[0] = listaResistencia
+            args[1] = listaSistema
+            args[2] = listaJoePublic
+        */
+        
+        if (args!= null && args.length == 3){
+            agentesResistencia
+        }
+        
         MessageTemplate protocolo = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_QUERY);// Crear un MessageTemplate de tipo FIPA_REQUEST;
         MessageTemplate performativa = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);// Asignar una Performativa de tipo REQUEST al objeto MessageTemplate
         MessageTemplate plantilla = MessageTemplate.and(protocolo,performativa); //Componer Plantilla con las anteriores

@@ -25,11 +25,11 @@ public class AgenteArquitectoManejador extends AchieveREResponder {
     }
     
     
-    protected ACLMessage handleQueryRef(ACLMessage queryRef) throws NotUnderstoodException, RefuseException {
+    /*protected ACLMessage handleQueryRef(ACLMessage queryRef) throws NotUnderstoodException, RefuseException {
         
     }
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
-    }
+    }*/
     
     protected void handleAgree(ACLMessage agree) {
     
