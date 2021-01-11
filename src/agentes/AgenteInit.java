@@ -12,8 +12,6 @@ import static java.lang.System.exit;
 
 public class AgenteInit extends Agent {
     private static int NUM_EXEC= 1;
-    private static final String[] modelos ={"J48","NaiveBayes","MultilayerPerceptron"};
-    private static final int[] porcentajes ={30,50,80};
     public class Iniciar_Agentes extends OneShotBehaviour{
         public void action(){
             ContainerController cc = getContainerController();
@@ -28,25 +26,19 @@ public class AgenteInit extends Agent {
                 }
             }
             try {
-                for (String cad:AgenteInit.modelos){
-                    ac = cc.createNewAgent("resultado-" + cad, "agentes.AgenteResultado", null);
+                    ac = cc.createNewAgent("joepublic", "agentes.AgenteJoePublic", null);
                     ac.start();
-                    Object argumentos[]= new String[]{cad, String.valueOf(AgenteInit.NUM_EXEC*AgenteInit.modelos.length)};
-                    ac = cc.createNewAgent("recopilador-" + cad, "agentes.AgenteRecopilador", argumentos);
+                    ac = cc.createNewAgent("oraculo", "agentes.Oraculo", null);
                     ac.start();
-                }
-                for (int i=0; i< AgenteInit.NUM_EXEC;i++){
-                    for (String cad:AgenteInit.modelos){
-                        for (int porcentaje_modelo:AgenteInit.porcentajes){
-                            Object argumentos[]= new String[]{cad, String.valueOf(porcentaje_modelo)};
-                            ac = cc.createNewAgent("dm-" + cad + "-" + porcentaje_modelo+ "-" + (i+1), "agentes.AgenteDM", argumentos);
-                            ac.start();
-                        }
-                    }
-                }
-                Object[] argumentos = new String[]{Integer.toString(AgenteInit.NUM_EXEC)};
-                ac = cc.createNewAgent("archivo", "agentes.AgenteArchivo", argumentos);
-                ac.start();
+                    ac = cc.createNewAgent("resistencia", "agentes.AgenteResistencia", null);
+                    ac.start();
+                    ac = cc.createNewAgent("resultado", "agentes.AgenteResultado", null);
+                    ac.start();
+                    Object argumentos[]= new String[]{"arquitecto"};
+                    ac = cc.createNewAgent("sistema", "agentes.AgenteSistema", argumentos);
+                    ac.start();
+                    ac = cc.createNewAgent("arquitecto", "agentes.AgenteArquitecto", null);
+                    ac.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();
             }
