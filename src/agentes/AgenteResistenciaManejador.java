@@ -19,7 +19,7 @@ import jade.proto.AchieveREResponder;
  */
 public class AgenteResistenciaManejador extends AchieveREResponder {
 
-    public AgenteResistenciaManejador(AgenteResistencia a, MessageTemplate plantilla) {
+    public AgenteResistenciaManejador(AgenteResistencia a, MessageTemplate plantilla){
         super(a, plantilla);
     }
     
