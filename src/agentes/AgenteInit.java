@@ -38,6 +38,7 @@ public class AgenteInit extends Agent {
                 }
                     ac = cc.createNewAgent("oraculo", "agentes.Oraculo", null);
                     ac.start();
+                    agentes_JP.add("oraculo");
                     for(String agente:RESISTENCIA_INIT) {
                         ac = cc.createNewAgent(agente, "agentes.AgenteResistencia", null);
                         ac.start();
