@@ -5,6 +5,7 @@
  */
 package agentes;
 
+import jade.core.behaviours.CyclicBehaviour;
 import java.util.StringTokenizer;
 
 import jade.lang.acl.ACLMessage;
@@ -18,11 +19,14 @@ import jade.domain.FIPAAgentManagement.FailureException;
  *
  * @author apied
  */
-public class AgenteArquitectoManejador extends AchieveREResponder {
+public class AgenteArquitectoManejador extends CyclicBehaviour {
+    private final int MAX_TIMEOUTS = 5;
+    private final int TIMEOUT = 2000; //ms
+    int contador = 1;
     
-    public AgenteArquitectoManejador(AgenteArquitecto arquitecto, MessageTemplate mt) {
-        super(arquitecto, mt);
-    }
+   // public AgenteArquitectoManejador(AgenteArquitecto arquitecto, MessageTemplate mt) {
+    //    super(arquitecto, mt);
+    //}
     
     
     /*protected ACLMessage handleQueryRef(ACLMessage queryRef) throws NotUnderstoodException, RefuseException {
@@ -31,10 +35,43 @@ public class AgenteArquitectoManejador extends AchieveREResponder {
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
     }*/
     
-    protected void handleAgree(ACLMessage agree) {
-    
+    @Override
+    public void action() {
+        //Leer mensaje (con block corto para hacer de espera entre acciones)
+        ACLMessage mensaje = myAgent.blockingReceive();
+        /*
+        Mensajes:
+            CON ARQUITECTO:
+            - Avisar Creación: Tipo = INFORM, Content = Creado
+            - Solicitar Agente Resistencia: Tipo = QUERY_REF, Content = AgenteResistencia
+            - RecibirAgente Resistencia: Tipo = INFORM, Content = AgenteResistencia, AID
+            - Solicitar Agente Sistema: Tipo = QUERY_REF, Content = AgenteSistema
+            - RecibirAgente Sistema: Tipo = INFORM, Content = AgenteSistema, AID
+            - Solicitar AgenteJoePublic: Tipo = QUERY_REF, Content = AgenteJoePublic
+            - RecibirAgenteJoePublic: Tipo = INFORM, Content = AgenteJoePublic, AID
+            - SolicitarInfoParaTOmaDecision: Tipo = QUERY_REF, Content = Informacion
+            - Recibir Información: Tipo = INFORM, Content = Informacion, LoQueMePodaisMandar
+            - A los agree de las peticiones de arriba no les he pedido content, creo que no hace falta
+            - ConocerOraculo: TIpo: REQUEST, Content: ConocerOraculo (arquitecto reenvía esta peticion a smith o neo cuando oraculo le notifica)
+            - ConocerOraculo - Agree: TIpo: AGREE, Content: ConocerOraculo
+            - ConocerOraculo - Inform: TIpo: INFORM, Content: ConocerOraculo
+            - Faltaría un mensaje de inicio o algo asi
+        */
+        if(mensaje.getPerformative() == ACLMessage.QUERY_REF){
+            //Solicitar agente resistencia
+            //Solicitar agente sistema
+            //Solicitar agente JoePublic
+            //Solicitar info para toma decision
+            //switch(mensaje.getContent()):
+        }
+        
+        
     }
-    protected void handleRefuse(ACLMessage refuse) {
+    
+    //protected void handleAgree(ACLMessage agree) {
+    
+    //}
+    //protected void handleRefuse(ACLMessage refuse) {
         
         // EN COMBATE
         // Si el combatiente que ha buscado el arquitecto está ocupado (segundo luchador):
@@ -49,21 +86,21 @@ public class AgenteArquitectoManejador extends AchieveREResponder {
         // REFUSE AL QUE HA INICIADO EL RECLUTAMIENTO
         // Para que vuelva a decidir acción
 
-    }
+    //}
 
-    protected void handleInform(ACLMessage inform) {
+    //protected void handleInform(ACLMessage inform) {
 
-    }
+    //}
 
-    protected void handleFailure(ACLMessage failure) {
-        if (failure.getSender().equals(myAgent.getAMS())) {
+    //protected void handleFailure(ACLMessage failure) {
+      //  if (failure.getSender().equals(myAgent.getAMS())) {
                 // FAILURE notification from the JADE runtime: the receiver
                 // does not exist
-                System.out.println("ARQUITECTO: Responder does not exist");
-        }
-        else {
-                System.out.println("ARQUITECTO: Agent "+failure.getSender().getName()+" failed to perform the requested action");
-        }
-    }   
+        //        System.out.println("ARQUITECTO: Responder does not exist");
+        //}
+        //else {
+          //      System.out.println("ARQUITECTO: Agent "+failure.getSender().getName()+" failed to perform the requested action");
+        //}
+    //}   
     
 }
