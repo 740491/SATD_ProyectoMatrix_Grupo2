@@ -209,9 +209,9 @@ public class AgenteSistema extends Agent {
                     }else{
                        morir();
                     }
-                }else if(content[0] == "ResultadoReclutamiento"){
+                }else if(content[0] == "Reclutar"){
                     ocupado = false; 
-                }else if(content[0] == "ResultadoOraculo"){
+                }else if(content[0] == "ConocerOraculo"){
                     ocupado = false; 
                 }else {
                     System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM inesperado: " + content[0]);
@@ -232,7 +232,7 @@ public class AgenteSistema extends Agent {
                         String res = tratar_combate(Integer.parseInt(content[1]));
 
                         //Informar
-                        ACLMessage inform = new ACLMessage(ACLMessage.AGREE);
+                        ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
                         inform.addReceiver(mensaje.getSender());
                         inform.setContent(res);
                         this.myAgent.send(inform);
@@ -241,8 +241,19 @@ public class AgenteSistema extends Agent {
                             morir();
                         }
                     }else if(content[0] == "ConocerOraculo" && (this.myAgent.getLocalName().contains("Neo") || this.myAgent.getLocalName().contains("Smith"))){
+                        ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
+                        agree.setContent("ConocerOraculo");
+                        agree.addReceiver(mensaje.getSender());
+                        this.myAgent.send(agree);
+                        
                         bonus+=5;
-                        if(bonus>99) bonus=90;
+                        if(bonus>max_bonus) bonus=max_bonus;
+                        
+                        ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
+                        inform.addReceiver(mensaje.getSender());
+                        inform.setContent("ConocerOraculo");
+                        this.myAgent.send(inform);
+                        
                     }else{//Si no -> Rechazar
                         ACLMessage respuesta = new ACLMessage(ACLMessage.REFUSE);
                         respuesta.addReceiver(mensaje.getSender());
