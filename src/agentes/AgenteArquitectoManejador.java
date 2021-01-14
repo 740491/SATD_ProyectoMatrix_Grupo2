@@ -8,6 +8,7 @@ package agentes;
 import jade.core.behaviours.CyclicBehaviour;
 import java.util.StringTokenizer;
 
+import agentes.AgenteSistema.Decision;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
@@ -59,10 +60,31 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         */
         if(mensaje.getPerformative() == ACLMessage.QUERY_REF){
             //Solicitar agente resistencia
+        	String content[] = mensaje.getContent().split(",");
+            if(content[0] == "AgenteResistencia"){
+            	
+            }
             //Solicitar agente sistema
+            else if(content[0] == "AgenteSistema"){
+            	
+            }
             //Solicitar agente JoePublic
+            else if(content[0] == "AgenteJoePublic"){
+            	
+            }
             //Solicitar info para toma decision
+            else if(content[0] == "Informacion"){
+            	Decision dec = decidir_accion();
+            }
             //switch(mensaje.getContent()):
+        }
+        else if(mensaje.getPerformative() == ACLMessage.INFORM){
+        	
+        }
+        else if(mensaje.getPerformative() == ACLMessage.REQUEST){
+        	
+        }else {
+        	
         }
         
         
