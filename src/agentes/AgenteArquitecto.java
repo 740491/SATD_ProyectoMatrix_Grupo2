@@ -32,10 +32,25 @@ import weka.gui.treevisualizer.TreeVisualizer;
 
 public class AgenteArquitecto extends Agent {
     
+    private static String[] RESISTENCIA_INIT = {"Neo","Morfeo","Triniti"};
+    private static String[] SISTEMA_INIT = {"Smith","Torrente","Terminator"};
+    
     enum tipoAgente{
         RESISTENCIA,
         SISTEMA,
         JOEPUBLIC
+    }
+    
+    enum tipoAccion{
+        ATACAR,
+        RECLUTAR
+    }
+    
+    enum tipoResultado{
+        EXITO,
+        EMPATE,
+        FRACASO,
+        ORACULO
     }
     
     public class Agente{
@@ -49,10 +64,42 @@ public class AgenteArquitecto extends Agent {
             this.bonus = i;
         }
     }
-   
+    
+    public class Evento{
+        int num_evento;
+        List<Agente> agentesResistencia;
+        List<Agente> agentesSistema;
+        List<Agente> agentesJoePublic;
+        tipoAccion accion;
+        tipoResultado resultado;
+        
+        private Evento(int num_evento, List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, tipoAccion accion, tipoResultado resultado){
+            this.num_evento = num_evento;
+            this.agentesResistencia = agentesResistencia;
+            this.agentesSistema = agentesSistema;
+            this.agentesJoePublic = agentesJoePublic;
+            this.accion = accion;
+            this.resultado = resultado;
+        }
+    }
+    
+    public class Log{
+        List<Evento> log;
+        int num_eventos;
+        
+        private Log(List<Evento> log, int num_eventos){
+            this.log = log;
+            this.num_eventos = num_eventos;
+        }
+    }
+    
+    /*
+        ATRIBUTOS ARQUITECTO
+    */
     List<Agente> agentesResistencia;
     List<Agente> agentesSistema;
     List<Agente> agentesJoePublic;
+    Log log;
     
     /*public class Recopilar_behaviour extends CyclicBehaviour {        
 
@@ -68,26 +115,34 @@ public class AgenteArquitecto extends Agent {
         
         System.out.println("Arquitecto "+ getLocalName()+" creado");
         
+        // Inicializar valores de las listas
         agentesResistencia = new ArrayList(); //inicialmente siempre los mismos
         agentesSistema = new ArrayList();
         agentesJoePublic = new ArrayList();
         
+        // Inicializar y dar valor al log
+        log = new Log(new ArrayList(), 0);
+        
+        // Dar valor a los agentes de La Resistencia
+        for(String agente:RESISTENCIA_INIT) {
+            Agente r = new Agente((String)agente, tipoAgente.RESISTENCIA, 50);
+            agentesResistencia.add(r);
+        }
+        
+        // Dar valor a los agentes del Sistema
+        for(String agente:SISTEMA_INIT) {
+            Agente s = new Agente((String)agente, tipoAgente.SISTEMA, 50);
+            agentesResistencia.add(s);
+        }
+        
+        // Dar valor a los agentes JoePublic, pasados como argumentos
         Object[] args = getArguments();
         //nos pasan en argumentos el nombre de todos los agentes joe public
         for(Object s : args ){
-            Agente candidato = new Agente((String)s, tipoAgente.JOEPUBLIC, 50);
+            Agente candidato = new Agente((String)s, tipoAgente.JOEPUBLIC, -1);
 
             agentesJoePublic.add(candidato);
         }
-        /*
-            args[0] = listaResistencia
-            args[1] = listaSistema
-            args[2] = listaJoePublic
-        */
-        
-        //if (args!= null && args.length == 3){
-        //    agentesResistencia
-        //}
         
         //MessageTemplate protocolo = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_QUERY);// Crear un MessageTemplate de tipo FIPA_REQUEST;
         //MessageTemplate performativa = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);// Asignar una Performativa de tipo REQUEST al objeto MessageTemplate
