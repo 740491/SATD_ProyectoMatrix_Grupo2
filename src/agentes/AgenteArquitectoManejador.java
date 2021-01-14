@@ -5,6 +5,7 @@
  */
 package agentes;
 
+import agentes.AgenteArquitecto.Agente;
 import jade.core.behaviours.CyclicBehaviour;
 import java.util.StringTokenizer;
 
@@ -15,6 +16,7 @@ import jade.proto.AchieveREResponder;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.domain.FIPAAgentManagement.FailureException;
+import java.util.Random;
 
 /**
  *
@@ -44,13 +46,13 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         Mensajes:
             CON ARQUITECTO:
             - Avisar Creación: Tipo = INFORM, Content = Creado
-            - Solicitar Agente Resistencia: Tipo = QUERY_REF, Content = AgenteResistencia
+            
             - RecibirAgente Resistencia: Tipo = INFORM, Content = AgenteResistencia, AID
-            - Solicitar Agente Sistema: Tipo = QUERY_REF, Content = AgenteSistema
+            
             - RecibirAgente Sistema: Tipo = INFORM, Content = AgenteSistema, AID
-            - Solicitar AgenteJoePublic: Tipo = QUERY_REF, Content = AgenteJoePublic
+            
             - RecibirAgenteJoePublic: Tipo = INFORM, Content = AgenteJoePublic, AID
-            - SolicitarInfoParaTOmaDecision: Tipo = QUERY_REF, Content = Informacion
+            
             - Recibir Información: Tipo = INFORM, Content = Informacion, LoQueMePodaisMandar
             - A los agree de las peticiones de arriba no les he pedido content, creo que no hace falta
             - ConocerOraculo: TIpo: REQUEST, Content: ConocerOraculo (arquitecto reenvía esta peticion a smith o neo cuando oraculo le notifica)
@@ -58,36 +60,97 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             - ConocerOraculo - Inform: TIpo: INFORM, Content: ConocerOraculo
             - Faltaría un mensaje de inicio o algo asi
         */
-        if(mensaje.getPerformative() == ACLMessage.QUERY_REF){
-            //Solicitar agente resistencia
-        	String content[] = mensaje.getContent().split(",");
-            if(content[0] == "AgenteResistencia"){
-            	
-            }
-            //Solicitar agente sistema
-            else if(content[0] == "AgenteSistema"){
-            	
-            }
-            //Solicitar agente JoePublic
-            else if(content[0] == "AgenteJoePublic"){
-            	
-            }
-            //Solicitar info para toma decision
-            else if(content[0] == "Informacion"){
-            	Decision dec = decidir_accion();
-            }
-            //switch(mensaje.getContent()):
-        }
-        else if(mensaje.getPerformative() == ACLMessage.INFORM){
-        	
-        }
-        else if(mensaje.getPerformative() == ACLMessage.REQUEST){
-        	
-        }else {
-        	
+        /*
+        - Solicitar Agente Resistencia: Tipo = QUERY_REF, Content = AgenteResistencia
+        - Solicitar Agente Sistema: Tipo = QUERY_REF, Content = AgenteSistema
+        - Solicitar AgenteJoePublic: Tipo = QUERY_REF, Content = AgenteJoePublic
+        - SolicitarInfoEstado: Tipo = QUERY_REF, Content = Informacion
+         */
+        switch (mensaje.getPerformative()) {
+            case ACLMessage.QUERY_REF:
+                tratarQueryRef(mensaje);
+                break;
+            case ACLMessage.REQUEST:
+                break;
+            case ACLMessage.AGREE:
+                break;
+            case ACLMessage.INFORM:
+                break;
+            case ACLMessage.REFUSE:
+                break;
+            default:
+                break;
         }
         
         
+    }
+    
+    private void tratarQueryRef(ACLMessage msg){
+        
+        String content[] = msg.getContent().split(",");
+        // CASOS EN LOS QUE SE PUEDE RECIBIR UN QUERY_REF
+        
+        // ESTADO DEL SISTEMA
+        if (content[0].equals("ESTADOSISTEMA")) {
+            // Confirmar (agree)
+            ACLMessage agree = msg.createReply();
+            agree.setPerformative(ACLMessage.AGREE);
+            this.myAgent.send(agree);
+            
+            // Seleccionar estado del sistema -> String a parsear, clase... DECIDIR
+            // TODO
+            //estado = ...
+            
+            // Enviar respuesta (inform)
+            ACLMessage inform = msg.createReply();
+            inform.setPerformative(ACLMessage.INFORM_REF);
+            //inform.setContentObject(estado);
+            this.myAgent.send(inform);
+        }
+        // COMBATIR
+        else if(content[0].equals("COMBATIR")){
+            // Determinar el bando de quién ha enviado el mensaje
+            Agente a;
+            Random random = new Random();
+            if(content[1].equals("SISTEMA")){
+                // tomar agente random de la resistencia (agentesResistencia)
+            }
+            else{
+                // tomar agente random del sistema (agentesSistema)
+            }
+            
+            // Enviar request y esperar respuestas para confirmar al que inició la petición
+        }
+        // RECLUTAR
+        else{
+            Agente a;
+            Random random = new Random();
+            // tomar agente JoePublic random (agentesJoePublic)
+            
+            // Enviar request y esperar respuestas para confirmar al que inició la petición
+        }
+        
+        
+    }
+    
+    // Como resultado del combate o como resultado del reclutamiento
+    private void tratarRequest(ACLMessage msg){
+    
+    }
+    
+    // Sólo se puede producir si el agente a emparejar está ocupado (O SI SE ASIGNA UNO DIRECTAMENTE EN EL QUERY_REF -> BORRAR)
+    private void tratarRefuse(ACLMessage msg){
+    
+    }
+    
+    // En caso del combate si el agente a emparejar acepta (O SI SE ASIGNA UNO DIRECTAMENTE EN EL QUERY_REF -> BORRAR)
+    private void tratarAgree(ACLMessage msg){
+    
+    }
+    
+    // En caso del combate si el agente a emparejar informa (O SI SE ASIGNA UNO DIRECTAMENTE EN EL QUERY_REF -> BORRAR)
+    private void tratarInform(ACLMessage msg){
+    
     }
     
     //protected void handleAgree(ACLMessage agree) {
