@@ -5,7 +5,7 @@
  */
 package agentes;
 
-/**111
+/**
  *
  * @author Tisho
  */
@@ -190,7 +190,7 @@ public class AgenteSistema extends Agent {
                 }else if(content[0] == "AgenteJoePublic"){
                         ACLMessage query = new ACLMessage(ACLMessage.REQUEST);
                         query.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                        query.setContent("Reclutar," + String.valueOf(bonus));
+                        query.setContent("Reclutar-Sistema," + String.valueOf(bonus));
                         this.myAgent.send(query);
                 }else if(content[0] == "AgenteOraculo"){
                         ACLMessage query = new ACLMessage(ACLMessage.REQUEST);
