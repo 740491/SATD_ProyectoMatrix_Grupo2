@@ -153,7 +153,7 @@ public class AgenteSistema extends Agent {
                     if(dec == Decision.COMBATIR){
                         ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
                         query.addReceiver(arquitecto);
-                        query.setContent("AgenteResistencia");//TODO: AgenteSistema
+                        query.setContent("COMBATIR,AgenteSistema," + Integer.toString(bonus));//TODO: AgenteSistema
                         this.myAgent.send(query);
 
                         timeouts = MAX_TIMEOUTS;

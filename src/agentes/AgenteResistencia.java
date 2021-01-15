@@ -131,12 +131,12 @@ public class AgenteResistencia extends Agent {
             float resultado = rand.nextFloat() * 1 + (bonus-bonus_rival)/10;      
             if(resultado > 0.55){ //Victoria
                 if(bonus < max_bonus) bonus++;
-                return "Victoria";
+                return "EXITO";
             }else if(resultado >= 0.45){ //Tablas
                 bonus--;
-                return "Tablas";
+                return "EMPATE";
             }else{ //Derrota
-                return "Derrota";
+                return "FRACASO";
             }
         }
         
@@ -153,7 +153,7 @@ public class AgenteResistencia extends Agent {
                     if(dec == Decision.COMBATIR){
                         ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
                         query.addReceiver(arquitecto);
-                        query.setContent("AgenteSistema");//TODO: AgenteSistema
+                        query.setContent("COMBATIR,AgenteResistencia," + Integer.toString(bonus));//TODO: AgenteSistema
                         this.myAgent.send(query);
 
                         timeouts = MAX_TIMEOUTS;
@@ -183,30 +183,35 @@ public class AgenteResistencia extends Agent {
                 timeouts = MAX_TIMEOUTS;
                 String content[] = mensaje.getContent().split(",");
                 if(content[0] == "AgenteSistema"){
-                        ACLMessage query = new ACLMessage(ACLMessage.REQUEST);
-                        query.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                        query.setContent("Combatir," + String.valueOf(bonus));
-                        this.myAgent.send(query);
+                        ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+                        request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
+                        request.setContent("Combatir," + String.valueOf(bonus));
+                        this.myAgent.send(request);
                 }else if(content[0] == "AgenteJoePublic"){
-                        ACLMessage query = new ACLMessage(ACLMessage.REQUEST);
-                        query.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                        query.setContent("Reclutar-Resistencia" + String.valueOf(bonus));
-                        this.myAgent.send(query);
+                        ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+                        request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
+                        request.setContent("Reclutar-Resistencia" + String.valueOf(bonus));
+                        this.myAgent.send(request);
                 }else if(content[0] == "AgenteOraculo"){
-                        ACLMessage query = new ACLMessage(ACLMessage.REQUEST);
-                        query.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                        query.setContent("ConocerOraculo");
-                        this.myAgent.send(query);
+                        ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+                        request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
+                        request.setContent("ConocerOraculo");
+                        this.myAgent.send(request);
                 }else if(content[0] == "Informacion"){
                     ocupado = false; 
                     //TODO: Actualizar info
                 }else if(content[0] == "ResultadoCombate"){
-                    ocupado = false; 
-                    if(content[1] == "Victoria"){
+                    ocupado = false;
+                    ACLMessage query = new ACLMessage(ACLMessage.REQUEST);
+                    query.addReceiver(arquitecto);
+                    if(content[1] == "EXITO"){
+                        query.setContent("EXITO");
                         if(bonus < max_bonus) bonus++;
-                    }else if(content[1]=="Tablas"){
+                    }else if(content[1]=="EMPATE"){
+                        query.setContent("EMPATE");
                         bonus--;
                     }else{
+                        query.setContent("EMPATE");
                        morir();
                     }
                 }else if(content[0] == "Reclutar"){
@@ -236,7 +241,7 @@ public class AgenteResistencia extends Agent {
                         inform.addReceiver(mensaje.getSender());
                         inform.setContent(res);
                         this.myAgent.send(inform);
-                        if(res=="Derrota"){ //Morir
+                        if(res=="FRACASO"){ //Morir
                             //Informar a arquitecto
                             morir();
                         }
