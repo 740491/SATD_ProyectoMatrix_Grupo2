@@ -6,16 +6,19 @@
 package agentes;
 
 import agentes.AgenteArquitecto.Agente;
+import agentes.AgenteArquitecto.tipoAgente;
 import jade.core.behaviours.CyclicBehaviour;
 import java.util.StringTokenizer;
 
 import agentes.AgenteSistema.Decision;
+import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.domain.FIPAAgentManagement.FailureException;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -27,10 +30,64 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     private final int TIMEOUT = 2000; //ms
     int contador = 1;
     
-   // public AgenteArquitectoManejador(AgenteArquitecto arquitecto, MessageTemplate mt) {
-    //    super(arquitecto, mt);
-    //}
+    /*
+        ATRIBUTOS ARQUITECTO
+    */
+    List<Agente> agentesResistencia;
+    List<Agente> agentesSistema;
+    List<Agente> agentesJoePublic;
     
+    List<Agente> agentesResistenciaLibres;
+    List<Agente> agentesSistemaLibres;
+    List<Agente> agentesJoePublicLibres;
+    
+    AgenteArquitecto.Log log;
+   
+
+    AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, AgenteArquitecto.Log log) {
+        this.agentesResistencia = agentesResistencia;
+        this.agentesSistema = agentesSistema;
+        this.agentesJoePublic = agentesJoePublic;
+        
+        this.agentesResistenciaLibres = agentesResistencia;
+        this.agentesSistemaLibres = agentesSistema;
+        this.agentesJoePublicLibres = agentesJoePublic;
+        
+        this.log = log;
+    }
+    
+    private Agente elegirRandom(tipoAgente tipo){
+       Random rand = new Random();
+       Agente candidato;
+       int randomIndex;
+        switch (tipo) {
+                case RESISTENCIA:
+                    randomIndex = rand.nextInt(agentesResistenciaLibres.size());
+                    candidato = agentesResistenciaLibres.get(randomIndex);
+                    //se elimina al que ya esta ocupado
+                    agentesResistenciaLibres.remove(randomIndex);
+                    return candidato;
+                   
+                case SISTEMA:
+                    
+                    randomIndex = rand.nextInt(agentesSistemaLibres.size());
+                    candidato = agentesSistemaLibres.get(randomIndex);
+                    //se elimina al que ya esta ocupado
+                    agentesSistemaLibres.remove(randomIndex);
+                    return candidato;
+                    
+                case JOEPUBLIC:
+                    randomIndex = rand.nextInt(agentesJoePublicLibres.size());
+                    candidato = agentesJoePublicLibres.get(randomIndex);
+                    //se elimina al que ya esta ocupado
+                    agentesJoePublicLibres.remove(randomIndex);
+                    return candidato;
+                    
+                default:
+                    return null;
+            }
+        
+    }
     
     /*protected ACLMessage handleQueryRef(ACLMessage queryRef) throws NotUnderstoodException, RefuseException {
         
@@ -111,15 +168,22 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         else if(content[0].equals("COMBATIR")){
             // Determinar el bando de quién ha enviado el mensaje
             Agente a;
-            Random random = new Random();
             if(content[1].equals("SISTEMA")){
                 // tomar agente random de la resistencia (agentesResistencia)
+                a = elegirRandom(tipoAgente.RESISTENCIA);
+                
             }
             else{
                 // tomar agente random del sistema (agentesSistema)
+                 a = elegirRandom(tipoAgente.SISTEMA);
             }
             
             // Enviar request y esperar respuestas para confirmar al que inició la petición
+            // no se que enviarle...
+            //ACLMessage query = new ACLMessage(ACLMessage.REQUEST);
+            //query.addReceiver(new AID(a.getNombre(), AID.ISLOCALNAME));
+            //query.setContent("Combatir," + String.valueOf(content[2]));
+            //this.myAgent.send(query);
         }
         // RECLUTAR
         else{

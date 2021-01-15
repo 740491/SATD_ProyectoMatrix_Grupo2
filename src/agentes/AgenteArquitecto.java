@@ -63,6 +63,15 @@ public class AgenteArquitecto extends Agent {
             this.tipo = tipoAgente;
             this.bonus = i;
         }
+        public String getNombre(){
+            return this.nombre;
+        }
+        public tipoAgente getTipo(){
+            return this.tipo;
+        }
+        public int getBonus(){
+            return this.bonus;
+        }
     }
     
     public class Evento{
@@ -148,7 +157,7 @@ public class AgenteArquitecto extends Agent {
         //MessageTemplate performativa = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);// Asignar una Performativa de tipo REQUEST al objeto MessageTemplate
         //MessageTemplate plantilla = MessageTemplate.and(protocolo,performativa); //Componer Plantilla con las anteriores
               
-        this.addBehaviour(new AgenteArquitectoManejador());
+        this.addBehaviour(new AgenteArquitectoManejador( agentesResistencia, agentesSistema, agentesJoePublic, log));
     }
     
     @Override
