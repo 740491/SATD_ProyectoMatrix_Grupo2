@@ -208,6 +208,9 @@ public class AgenteResistencia extends Agent {
             }
             else if(ACLMessage.REFUSE == mensaje.getPerformative() ){
                 ocupado = false;
+                if(mensaje.getContent().equals("DESOCUPATE")){
+                    avisar_arquitecto(tipoMensaje.ESTOYLIBRE.name() + "," + tipoAgente.RESISTENCIA.name());
+                }
             }
             else if(ACLMessage.REQUEST == mensaje.getPerformative() ){
                 System.out.println("Soy: " + this.myAgent.getName() + "y el agente " + mensaje.getSender().getLocalName() + " me envia REQUEST DE COMBATE: "  + mensaje.getContent());
@@ -255,6 +258,7 @@ public class AgenteResistencia extends Agent {
                 }else{//Si no -> Rechazar
                         System.out.println("EL AGENTE: " + this.myAgent.getLocalName() + " ESTA OCUPADO!");
                         ACLMessage respuesta = new ACLMessage(ACLMessage.REFUSE);
+                        respuesta.setContent("DESOCUPATE");
                         respuesta.addReceiver(mensaje.getSender());
                 }
             }
