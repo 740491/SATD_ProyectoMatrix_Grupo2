@@ -22,16 +22,8 @@ public class JfrmAgenteResultado extends javax.swing.JFrame {
         initComponents();
     }
 
-    
-    public void mostrarResultado(String res){
-         String[] resultados = res.split(",");
-         String resJfrm = "Modelo: " + resultados[0] +"\n"+
-                 "Instancias clasificadas: " + resultados[2] +"\n"+
-                 "%instancias correctamente clasificadas: " + resultados[3]+"\n"+
-                 "numero instancias correctamente clasificadas: " + resultados[4]+"\n"+
-                 "%instancias incorrectamente clasificadas: " + resultados[5]+"\n"+
-                 "numero instancias incorrectamente clasificadas: " + resultados[6];
-        jtxtAreaResultado.setText(resJfrm);
+    public void mostrarResultado(String str){		
+		jtxtAreaResultado.setText(str);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -46,7 +38,7 @@ public class JfrmAgenteResultado extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Resultados de la clasificacion\n", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
 
         jtxtAreaResultado.setColumns(20);
-        jtxtAreaResultado.setRows(5);
+        jtxtAreaResultado.setRows(50);
         jScrollPane1.setViewportView(jtxtAreaResultado);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
