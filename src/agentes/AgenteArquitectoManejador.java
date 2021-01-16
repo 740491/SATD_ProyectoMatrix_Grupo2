@@ -15,15 +15,21 @@ import jade.core.behaviours.CyclicBehaviour;
 import java.util.StringTokenizer;
 
 import jade.core.AID;
+import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.domain.FIPAAgentManagement.FailureException;
+import jade.wrapper.AgentController;
+import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,6 +39,8 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     private final int MAX_TIMEOUTS = 5;
     private final int TIMEOUT = 2000; //ms
     int contador = 1;
+    ContainerController cc;
+    
     
     /*
         ATRIBUTOS ARQUITECTO
@@ -50,10 +58,11 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     AID resultado;
    
 
-    AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, List<Evento> log) {
+    AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, List<Evento> log, ContainerController cc) {
         this.agentesResistencia = agentesResistencia;
         this.agentesSistema = agentesSistema;
         this.agentesJoePublic = agentesJoePublic;
+        this.cc = cc;
         
         this.agentesResistenciaLibres = new ArrayList();
         for(Agente agente:agentesResistencia){
@@ -143,6 +152,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         //Leer mensaje (con block corto para hacer de espera entre acciones)
         ACLMessage mensaje = myAgent.blockingReceive();
         
+        
         // QUITAR DE LIBRES (si no se había quitado ya) AL QUE ENVÍA EL MENSAJE
         Agente auxiliarJoe = new Agente(mensaje.getSender().getLocalName(),tipoAgente.JOEPUBLIC);
         Agente auxiliarResistencia = new Agente(mensaje.getSender().getLocalName(),tipoAgente.RESISTENCIA);
@@ -189,7 +199,13 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                 break;
             case ACLMessage.REQUEST:
                 System.out.println("F");
-                tratarRequest(mensaje);
+        
+                try {
+                    tratarRequest(mensaje);
+                } catch (StaleProxyException ex) {
+                    Logger.getLogger(AgenteArquitectoManejador.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        
                 break;
             case ACLMessage.AGREE:
                 break;
@@ -319,7 +335,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     }
     
     // Como resultado del combate o como resultado del reclutamiento
-    private void tratarRequest(ACLMessage msg){
+    private void tratarRequest(ACLMessage msg) throws StaleProxyException{
         System.out.println("REQUEST ARQUITECTO");
         String content[] = msg.getContent().split(",");
         System.out.println("De: " + content[0]);
@@ -415,6 +431,10 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             }
             //RESULT RECLUTAMIENTO
             else{
+                Object argumentos[]= new String[]{"arquitecto"};
+                
+
+                AgentController ac = null;
                 if(content[3].equals(tipoResultado.EXITO.name())){
                     if(content[1].equals(tipoAgente.RESISTENCIA.name())){
                         //el agente resistencia queda libre
@@ -424,6 +444,9 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         aR = new Agente(content[4], tipoAgente.RESISTENCIA);
                         agentesResistencia.add(aR);
                         agentesResistenciaLibres.add(aR);
+                        
+                        ac = cc.createNewAgent(aR.getNombre(), "agentes.AgenteResistencia", argumentos);
+                        ac.start();
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.EXITO);
                     }
@@ -435,6 +458,9 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         aS = new Agente(content[4], tipoAgente.SISTEMA);
                         agentesSistema.add(aS);
                         agentesSistemaLibres.add(aS);
+                        
+                        ac = cc.createNewAgent(aS.getNombre(), "agentes.AgenteSistema", argumentos);
+                        ac.start();
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.EXITO);
                     }

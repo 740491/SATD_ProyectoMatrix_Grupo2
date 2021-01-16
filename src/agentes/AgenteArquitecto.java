@@ -9,6 +9,7 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.wrapper.ContainerController;
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -98,8 +99,8 @@ public class AgenteArquitecto extends Agent {
         //MessageTemplate protocolo = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_QUERY);// Crear un MessageTemplate de tipo FIPA_REQUEST;
         //MessageTemplate performativa = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);// Asignar una Performativa de tipo REQUEST al objeto MessageTemplate
         //MessageTemplate plantilla = MessageTemplate.and(protocolo,performativa); //Componer Plantilla con las anteriores
-              
-        this.addBehaviour(new AgenteArquitectoManejador( agentesResistencia, agentesSistema, agentesJoePublic, log));
+        ContainerController cc = getContainerController();
+        this.addBehaviour(new AgenteArquitectoManejador( agentesResistencia, agentesSistema, agentesJoePublic, log, cc));
     }
     
     @Override
