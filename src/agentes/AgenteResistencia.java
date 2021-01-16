@@ -59,14 +59,16 @@ public class AgenteResistencia extends Agent {
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
                 if(respuesta == null) this.myAgent.send(resultado);
                 else if(ACLMessage.AGREE == respuesta.getPerformative()){
-                    System.out.println("BIEN!! El arquitecto confirma");
                     recopilador_agree = true;
                 }
             }
             while(!recopilador_inform){
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
                 if(respuesta == null) System.out.println("AGENTE SISTEMA/RESISTENCIA SE QUEDA PILLADO Y NO SE QUE HACER");
-                else if(ACLMessage.INFORM == respuesta.getPerformative()) recopilador_inform = true;
+                else if(ACLMessage.INFORM == respuesta.getPerformative()){
+                    recopilador_inform = true;
+                    System.out.println("BIEN!! El arquitecto confirma");
+                }
             }
         }
         
