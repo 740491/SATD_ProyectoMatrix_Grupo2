@@ -44,15 +44,24 @@ public class AgenteResistencia extends Agent {
     //---------------------------------- FUNCIONES Y METODOS ----------------------------------
     public class Sistema_behaviour extends CyclicBehaviour {
 
+        //Avisa al arquitecto con bucles para reintentar y todo
         public void avisar_arquitecto(String contenido){ //TODO:
             boolean recopilador_agree = false;
-            ACLMessage mensaje_muerte = new ACLMessage(ACLMessage.REQUEST);
-            mensaje_muerte.setContent(contenido);
-            mensaje_muerte.addReceiver(arquitecto);
+            boolean recopilador_inform = false;
+            
+            ACLMessage resultado = new ACLMessage(ACLMessage.REQUEST);
+            resultado.addReceiver(arquitecto);
+            resultado.setContent(contenido);
+            this.myAgent.send(resultado);
             while(!recopilador_agree){
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
-                if(respuesta == null) this.myAgent.send(mensaje_muerte);
+                if(respuesta == null) this.myAgent.send(resultado);
                 else if(ACLMessage.AGREE == respuesta.getPerformative()) recopilador_agree = true;
+            }
+            while(!recopilador_inform){
+                ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
+                if(respuesta == null) System.out.println("AGENTE SISTEMA/RESISTENCIA SE QUEDA PILLADO Y NO SE QUE HACER PORQUE EL PROTOCOLO CREO QUE NO DEBE SER REQUEST");
+                else if(ACLMessage.AGREE == respuesta.getPerformative()) recopilador_inform = true;
             }
         }
         
@@ -103,7 +112,7 @@ public class AgenteResistencia extends Agent {
                 }
                 else{
                     timeouts--;
-                    if(timeouts == 0) ocupado = false; // Se acabo el tiempo de espera
+                    if(timeouts <= 0) ocupado = false; // Se acabo el tiempo de espera
                 }
             }
             else if(ACLMessage.AGREE == mensaje.getPerformative() ){
@@ -140,11 +149,9 @@ public class AgenteResistencia extends Agent {
                 
                 String content[] = mensaje.getContent().split(",");
                 //Envíar resultado a arquitecto TODO: COMPROBAR RECEPCION CON BUCLE
-                ACLMessage resultado = new ACLMessage(ACLMessage.REQUEST);
-                resultado.addReceiver(arquitecto);
-                resultado.setContent(tipoMensaje.RESULTADO.name() + "," + tipoAgente.RESISTENCIA.name() + "," + 
-                        content[0] + "," + content[1] + resultado.getSender().getLocalName());
-                this.myAgent.send(resultado);
+                
+                avisar_arquitecto(tipoMensaje.RESULTADO.name() + "," + tipoAgente.RESISTENCIA.name() + "," +
+                        content[0] + "," + content[1] + mensaje.getSender().getLocalName());
                 
                 if(content[0] == tipoAccion.COMBATE.name()){
                     ocupado = false;
