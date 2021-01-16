@@ -66,7 +66,7 @@ public class AgenteResistencia extends Agent {
             while(!recopilador_inform){
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
                 if(respuesta == null) System.out.println("AGENTE SISTEMA/RESISTENCIA SE QUEDA PILLADO Y NO SE QUE HACER");
-                else if(ACLMessage.AGREE == respuesta.getPerformative()) recopilador_inform = true;
+                else if(ACLMessage.INFORM == respuesta.getPerformative()) recopilador_inform = true;
             }
         }
         
@@ -136,7 +136,7 @@ public class AgenteResistencia extends Agent {
                 }
                 else{
                     timeouts--;
-                    if(timeouts <= 0) ocupado = false; // Se acabo el tiempo de espera
+                    if(timeouts <= 0) System.out.println("SALTA TIMEOUT!!!!"); ocupado = false; // Se acabo el tiempo de espera
                 }
             }
             else if(ACLMessage.AGREE == mensaje.getPerformative() ){
@@ -216,7 +216,7 @@ public class AgenteResistencia extends Agent {
                         String res = tratar_combate(Integer.parseInt(content[2])).name();
                         String res_enviar = rotar(res).name();
                         //Informar a agente
-                        System.out.println("DEVOLVEMOS: " + tipoAccion.COMBATE.name() + "," + res);
+                        System.out.println("DEVOLVEMOS: " + tipoAccion.COMBATE.name() + "," + res + " del " + this.myAgent.getLocalName());
                         
                         ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
                         inform.addReceiver(mensaje.getSender());
@@ -247,6 +247,7 @@ public class AgenteResistencia extends Agent {
                         System.err.println("ERROR: El agente " + this.myAgent.getName() + " recibe REQUEST inesperado: " + content[0]);
                     }
                 }else{//Si no -> Rechazar
+                        System.out.println("EL AGENTE: " + this.myAgent.getLocalName() + " ESTA OCUPADO!");
                         ACLMessage respuesta = new ACLMessage(ACLMessage.REFUSE);
                         respuesta.addReceiver(mensaje.getSender());
                 }

@@ -66,7 +66,7 @@ public class AgenteSistema extends Agent {
             while(!recopilador_inform){
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
                 if(respuesta == null) System.out.println("AGENTE SISTEMA/RESISTENCIA SE QUEDA PILLADO Y NO SE QUE HACER");
-                else if(ACLMessage.AGREE == respuesta.getPerformative()) recopilador_inform = true;
+                else if(ACLMessage.INFORM == respuesta.getPerformative()) recopilador_inform = true;
             }
         }
         
@@ -136,7 +136,7 @@ public class AgenteSistema extends Agent {
                 }
                 else{
                     timeouts--;
-                    if(timeouts == 0) ocupado = false; // Se acabo el tiempo de espera
+                    if(timeouts == 0) System.out.println("SALTA TIMEOUT!!!!"); ocupado = false; // Se acabo el tiempo de espera
                 }
             }
             else if(ACLMessage.AGREE == mensaje.getPerformative() ){
@@ -179,21 +179,21 @@ public class AgenteSistema extends Agent {
                 
                 String content[] = mensaje.getContent().split(",");
                 //Envíar resultado a arquitecto
-                avisar_arquitecto(tipoMensaje.RESULTADO.name() + "," + tipoAgente.RESISTENCIA.name() + "," +
+                avisar_arquitecto(tipoMensaje.RESULTADO.name() + "," + tipoAgente.SISTEMA.name() + "," +
                         content[0] + "," + content[1] + "," + mensaje.getSender().getLocalName());
                 
-                if(content[0] == tipoAccion.COMBATE.name()){
+                if(content[0].equals(tipoAccion.COMBATE.name())){
                     ocupado = false;
-                    if(content[1] == tipoResultado.EXITO.name()){
+                    if(content[1].equals(tipoResultado.EXITO.name())){
                         if(bonus < max_bonus) bonus++;
-                    }else if(content[1]==tipoResultado.EMPATE.name()){
+                    }else if(content[1].equals(tipoResultado.EMPATE.name())){
                         bonus--;
                     }else{
                         System.out.println("Descanse en paz, agenge sistema " + this.myAgent.getLocalName());
                         this.myAgent.doDelete();
                     }
-                }else if(content[0] == tipoAccion.RECLUTAMIENTO.name()){
-                }else if(content[0] == tipoAccion.CONOCERORACULO.name()){
+                }else if(content[0].equals(tipoAccion.RECLUTAMIENTO.name())){
+                }else if(content[0].equals(tipoAccion.CONOCERORACULO.name())){
                 }else {
                     System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM inesperado: " + content[0]);
                 }
@@ -216,7 +216,7 @@ public class AgenteSistema extends Agent {
                         String res_ret = rotar(res).name();
                         
                         //Informar a agente
-                        System.out.println("DEVOLVEMOS: " + tipoAccion.COMBATE.name() + "," + res);
+                        System.out.println("DEVOLVEMOS: " + tipoAccion.COMBATE.name() + "," + res + " del " + this.myAgent.getLocalName());
                         ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
                         inform.addReceiver(mensaje.getSender());
                         inform.setContent(tipoAccion.COMBATE.name() + "," + res_ret);
@@ -245,6 +245,8 @@ public class AgenteSistema extends Agent {
                         System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe REQUEST inesperado: " + content[0]);
                     }
                 }else{//Si no -> Rechazar
+                        System.out.println("EL AGENTE: " + this.myAgent.getLocalName() + " ESTA OCUPADO!");
+
                         ACLMessage respuesta = new ACLMessage(ACLMessage.REFUSE);
                         respuesta.addReceiver(mensaje.getSender());
                 }

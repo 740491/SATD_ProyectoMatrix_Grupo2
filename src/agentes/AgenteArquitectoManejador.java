@@ -84,42 +84,38 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         Random rand = new Random();
         Agente candidato;
         int randomIndex;
-        try{
-           /*System.out.println(agentesResistenciaLibres);
-           System.out.println(agentesSistemaLibres);
-           System.out.println(agentesJoePublicLibres);
-           System.out.println("------------------------");
-           System.out.println(agentesResistencia);
-           System.out.println(agentesSistema);
-           System.out.println(agentesJoePublic);
-            */
-           
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
+        
         switch (tipo) {
             case RESISTENCIA:
-                randomIndex = rand.nextInt(agentesResistenciaLibres.size());
-                candidato = agentesResistenciaLibres.get(randomIndex);
-                //se elimina al que ya esta ocupado
-                agentesResistenciaLibres.remove(randomIndex);
-                return candidato;
+                if(agentesResistenciaLibres.size()>0){
+                    randomIndex = rand.nextInt(agentesResistenciaLibres.size());
+                    candidato = agentesResistenciaLibres.get(randomIndex);
+                    //se elimina al que ya esta ocupado
+                    agentesResistenciaLibres.remove(randomIndex);
+                    return candidato;
+                }
+                else{return null;}
 
             case SISTEMA:
-                randomIndex = rand.nextInt(agentesSistemaLibres.size());
-                candidato = agentesSistemaLibres.get(randomIndex);
-                //se elimina al que ya esta ocupado
-                agentesSistemaLibres.remove(randomIndex);
-                return candidato;
+                if(agentesSistemaLibres.size()>0){
+                    randomIndex = rand.nextInt(agentesSistemaLibres.size());
+                    candidato = agentesSistemaLibres.get(randomIndex);
+                    //se elimina al que ya esta ocupado
+                    agentesSistemaLibres.remove(randomIndex);
+                    return candidato;
+                }
+                else{return null;}
 
             case JOEPUBLIC:
-                int indice_oraculo = encontrarOraculo(agentesJoePublic);
-                randomIndex = rand.nextInt(agentesJoePublicLibres.size());
-                candidato = agentesJoePublicLibres.get(randomIndex);
-                //se elimina al que ya esta ocupado
-                agentesJoePublicLibres.remove(randomIndex);
-                return candidato;
+                if(agentesJoePublicLibres.size()>0){
+                    int indice_oraculo = encontrarOraculo(agentesJoePublic);
+                    randomIndex = rand.nextInt(agentesJoePublicLibres.size());
+                    candidato = agentesJoePublicLibres.get(randomIndex);
+                    //se elimina al que ya esta ocupado
+                    agentesJoePublicLibres.remove(randomIndex);
+                    return candidato;
+                }
+                else{return null;}
 
             default:
                 return null;
@@ -140,7 +136,13 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     @Override
     public void action() {
         
-        System.out.println("AL COMIENZO");
+        
+        
+        //Leer mensaje (con block corto para hacer de espera entre acciones)
+        ACLMessage mensaje = myAgent.blockingReceive();
+        
+        System.out.println("AL COMIENZO, me envia mensaje: " + mensaje.getSender().getLocalName() + " con la intencion de: " + mensaje.getContent());
+        System.out.println("Agentes libre: ");
         System.out.println(agentesResistenciaLibres);
         System.out.println(agentesSistemaLibres);
         System.out.println(agentesJoePublicLibres);
@@ -149,11 +151,8 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         System.out.println(agentesSistema);
         System.out.println(agentesJoePublic);
         
-        //Leer mensaje (con block corto para hacer de espera entre acciones)
-        ACLMessage mensaje = myAgent.blockingReceive();
-        
-        
         // QUITAR DE LIBRES (si no se había quitado ya) AL QUE ENVÍA EL MENSAJE
+        /*
         Agente auxiliarJoe = new Agente(mensaje.getSender().getLocalName(),tipoAgente.JOEPUBLIC);
         Agente auxiliarResistencia = new Agente(mensaje.getSender().getLocalName(),tipoAgente.RESISTENCIA);
         Agente auxiliarSistema = new Agente(mensaje.getSender().getLocalName(),tipoAgente.SISTEMA);
@@ -169,6 +168,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             System.out.println("Era Sistema");
             agentesSistemaLibres.remove(auxiliarSistema);
         }
+        */
         /*
         Mensajes:
             CON ARQUITECTO:
@@ -294,21 +294,28 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             // Determinar el bando de quién ha enviado el mensaje
             Agente a;
             if(content[1].equals(tipoAgente.SISTEMA.name())){
-                // tomar agente random de la resistencia (agentesResistencia)
+                // tomar agente random de la resistencia (agentesResistencia), elimina de libres al que pide atacar
+                Agente auxiliar = new Agente(msg.getSender().getLocalName(),tipoAgente.SISTEMA);
+                agentesSistemaLibres.remove(auxiliar);
                 a = elegirRandom(tipoAgente.RESISTENCIA);
                 
             }
             else{
                 // tomar agente random del sistema (agentesSistema)
+                Agente auxiliar = new Agente(msg.getSender().getLocalName(),tipoAgente.RESISTENCIA);
+                agentesResistenciaLibres.remove(auxiliar);
                  a = elegirRandom(tipoAgente.SISTEMA);
             }
             
             /// Informs de arquitecto a agentes:
             // TIPOAGENTE, nombre
-            ACLMessage inform_result = new ACLMessage(ACLMessage.INFORM_REF);
-            inform_result.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
-            inform_result.setContent(a.getTipoAgente().name() + "," + a.getNombre());
-            this.myAgent.send(inform_result);
+            if(a!=null){
+                ACLMessage inform_result = new ACLMessage(ACLMessage.INFORM_REF);
+                inform_result.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
+                inform_result.setContent(a.getTipoAgente().name() + "," + a.getNombre());
+                this.myAgent.send(inform_result);
+            }
+            
         }
         // RECLUTAR
         else{
@@ -316,18 +323,18 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             // tomar agente JoePublic random (agentesJoePublic)
             a = elegirRandom(tipoAgente.JOEPUBLIC);
             
-            // Enviar tipo agente y su nombre al que quiere reclutar
-            ACLMessage inform_result = new ACLMessage(ACLMessage.INFORM_REF);
-            inform_result.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
-            if(a.getNombre().equals(tipoAgente.ORACULO.name())){
-                inform_result.setContent(tipoAgente.ORACULO.name() + "," + a.getNombre());
-            }
-            else{
-                inform_result.setContent(a.getTipoAgente().name() + "," + a.getNombre());
-            }
-            
-            
-            this.myAgent.send(inform_result);
+            if(a!=null){
+                 // Enviar tipo agente y su nombre al que quiere reclutar
+                ACLMessage inform_result = new ACLMessage(ACLMessage.INFORM_REF);
+                inform_result.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
+                if(a.getNombre().equals(tipoAgente.ORACULO.name())){
+                    inform_result.setContent(tipoAgente.ORACULO.name() + "," + a.getNombre());
+                }
+                else{
+                    inform_result.setContent(a.getTipoAgente().name() + "," + a.getNombre());
+                }
+                 this.myAgent.send(inform_result);
+            }        
             
         }
         
