@@ -11,6 +11,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import java.util.Random;
 
 /**
  *
@@ -34,31 +35,43 @@ public class AgenteJoePublic extends Agent {
         @Override
         public void action(){
         
-            ACLMessage mensaje = myAgent.blockingReceive();
-        
+            ACLMessage mensaje = myAgent.blockingReceive();           
+            
             if(ACLMessage.REQUEST == mensaje.getPerformative() ){
+                
+                ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
+                agree.addReceiver(mensaje.getSender());
+                this.myAgent.send(agree);
+            
+            
                 String content[] = mensaje.getContent().split(",");
-                if(content[0].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
-                    /*Se recibe el REQUEST del Agente Sistema*/
-                    System.out.println("El agente " + this.myAgent.getName() + " es de tipo " + content[0]);
-                    ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-                    /*RECLUTAR,tipoAgente, bonus (prob reclutamiento), RECLUTAR (exito o fracaso)*/
-                    request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                    //request.setContent();
-                    
-                    this.myAgent.send(request);
-                }else if(content[0].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
-                    /*Se recibe el REQUEST del Agente Resistencia*/
-                    System.out.println("El agente " + this.myAgent.getName() + " es de tipo " + content[0]);
-                    ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-                    
-                    request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                    //request.setContent();
-                    
-                    this.myAgent.send(request);
+                Random rand = new Random();
+                float prob = rand.nextFloat();
+                System.out.println("Probabilidad de reclutar creada " + prob);
+                if(prob < 0.8){
+                    /*Mando respuesta de reclutar*/
+                    ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
+                    respuesta.addReceiver(mensaje.getSender());
+                    respuesta.setContent(MensajesComunes.tipoResultado.EXITO.name());
+                    System.out.println("Éxito al reclutar.");
+                    this.myAgent.send(respuesta);
+                    this.myAgent.doDelete();
+                }else{
+                    /*Mando respuesta de no reclutar*/
+                    ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
+                    respuesta.addReceiver(mensaje.getSender());
+                    respuesta.setContent(MensajesComunes.tipoResultado.FRACASO.name());
+                    System.out.println("Fracaso al reclutar.");
+                    this.myAgent.send(respuesta);
+                    if(content[1].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
+                        /*Se recibe el REQUEST del Agente Sistema*/
+                        System.out.println("El agente " + this.myAgent.getName() + " es de tipo " + content[0]);
+                        this.myAgent.doDelete();
+                        System.out.println("Eliminado el agente.");
+                    }
                 }
             }
-    }
+        }
     }
     protected void setup()
     {
