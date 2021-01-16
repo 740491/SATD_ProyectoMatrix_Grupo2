@@ -17,19 +17,23 @@ public class Evento {
     List<Agente> agentesJoePublic;
     MensajesComunes.tipoAccion accion;
     MensajesComunes.tipoResultado resultado;
+    String agenteQueEnvia;
 
-    public Evento( List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, MensajesComunes.tipoAccion accion, MensajesComunes.tipoResultado resultado){
+    public Evento( List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, MensajesComunes.tipoAccion accion, MensajesComunes.tipoResultado resultado, String agenteQueEnvia){
         this.agentesResistencia = agentesResistencia;
         this.agentesSistema = agentesSistema;
         this.agentesJoePublic = agentesJoePublic;
         this.accion = accion;
         this.resultado = resultado;
+        this.agenteQueEnvia = agenteQueEnvia;
     }
 
     @Override
     public String toString() {
-        return "Evento{" + "agentesResistencia= " + agentesResistencia.toString() + ", agentesSistema= " + agentesSistema.toString() + ", agentesJoePublic= " + agentesJoePublic.toString() + ", accion=" + accion + ", resultado=" + resultado + "};";
+        return "Evento{" + "agentesResistencia=" + agentesResistencia + ", agentesSistema=" + agentesSistema + ", agentesJoePublic=" + agentesJoePublic + ", accion=" + accion + ", resultado=" + resultado + ", agenteQueEnvia=" + agenteQueEnvia + '}';
     }
+
+    
 
     @Override
     public int hashCode() {
