@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * @author apied
  */
 public class AgenteArquitectoManejador extends CyclicBehaviour {
-    private final int MAX_TIMEOUTS = 5;
+    private final int MAX_TIMEOUTS = 3;
     private final int TIMEOUT = 2000; //ms
     int contador = 1;
     ContainerController cc;

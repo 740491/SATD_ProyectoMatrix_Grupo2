@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 public class AgenteResistencia extends Agent {
     //---------------------------------- CONSTANTES ----------------------------------
     private final int MAX_TIMEOUTS = 3;
-    private final int TIMEOUT = 5000; //ms
+    private final int TIMEOUT = 1000; //ms
     
     //---------------------------------- VARIABLES GLOBALES ----------------------------------
     private Decisor decisor = new Decisor(Estrategias.ATACAR); // IMPORTANTE: Estrategia a utilizar

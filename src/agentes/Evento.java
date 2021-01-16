@@ -27,7 +27,7 @@ public class Evento {
         this.accion = accion;
         this.resultado = resultado;
         this.agenteQueEnvia = agenteQueEnvia;
-        this.agenteQueEnvia = agenteConQuienInteracciona;
+        this.agenteConQuienInteracciona = agenteConQuienInteracciona;
 
     }
 
