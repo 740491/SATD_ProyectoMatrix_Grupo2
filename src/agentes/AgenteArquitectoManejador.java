@@ -520,12 +520,19 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             if(content[1].equals(tipoAgente.RESISTENCIA.name())){
                 //el agente resistencia queda libre
                 Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
-                agentesResistenciaLibres.add(aR);
+                
+                if(!agentesResistenciaLibres.contains(aR)){
+                    agentesResistenciaLibres.add(aR);
+                } 
+                
             }
             else if(content[1].equals(tipoAgente.SISTEMA.name())){
                 //el agente sistema queda libre
                 Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
-                agentesSistemaLibres.add(aS);
+                
+                if(!agentesSistemaLibres.contains(aS)){
+                    agentesSistemaLibres.add(aS);
+                }
             
             }
             // Inform request

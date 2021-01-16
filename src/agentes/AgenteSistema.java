@@ -33,7 +33,7 @@ public class AgenteSistema extends Agent {
     private final int TIMEOUT = 5000; //ms
     
     //---------------------------------- VARIABLES GLOBALES ----------------------------------
-    private Decisor decisor = new Decisor(Estrategias.ATACAR); // IMPORTANTE: Estrategia a utilizar
+    private Decisor decisor = new Decisor(Estrategias.ALEATORIA); // IMPORTANTE: Estrategia a utilizar
     private int bonus;
     private int max_bonus;
     private int timeouts;
