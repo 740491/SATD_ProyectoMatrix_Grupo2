@@ -5,9 +5,10 @@
  */
 package agentes;
 
-import agentes.AgenteArquitecto.Agente;
-import agentes.AgenteArquitecto.tipoAgente;
+import agentes.Agente;
 import agentes.MensajesComunes.tipoAccion;
+import agentes.MensajesComunes.tipoAgente;
+import agentes.MensajesComunes.tipoMensaje;
 import agentes.MensajesComunes.tipoResultado;
 
 import jade.core.behaviours.CyclicBehaviour;
@@ -43,10 +44,10 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     List<Agente> agentesSistemaLibres;
     List<Agente> agentesJoePublicLibres;
     
-    AgenteArquitecto.Log log;
+    List<Evento> log;
    
 
-    AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, AgenteArquitecto.Log log) {
+    AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, List<Evento> log) {
         this.agentesResistencia = agentesResistencia;
         this.agentesSistema = agentesSistema;
         this.agentesJoePublic = agentesJoePublic;
@@ -63,31 +64,31 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
        Agente candidato;
        int randomIndex;
         switch (tipo) {
-                case RESISTENCIA:
-                    randomIndex = rand.nextInt(agentesResistenciaLibres.size());
-                    candidato = agentesResistenciaLibres.get(randomIndex);
-                    //se elimina al que ya esta ocupado
-                    agentesResistenciaLibres.remove(randomIndex);
-                    return candidato;
-                   
-                case SISTEMA:
-                    
-                    randomIndex = rand.nextInt(agentesSistemaLibres.size());
-                    candidato = agentesSistemaLibres.get(randomIndex);
-                    //se elimina al que ya esta ocupado
-                    agentesSistemaLibres.remove(randomIndex);
-                    return candidato;
-                    
-                case JOEPUBLIC:
-                    randomIndex = rand.nextInt(agentesJoePublicLibres.size());
-                    candidato = agentesJoePublicLibres.get(randomIndex);
-                    //se elimina al que ya esta ocupado
-                    agentesJoePublicLibres.remove(randomIndex);
-                    return candidato;
-                    
-                default:
-                    return null;
-            }
+            case RESISTENCIA:
+                randomIndex = rand.nextInt(agentesResistenciaLibres.size());
+                candidato = agentesResistenciaLibres.get(randomIndex);
+                //se elimina al que ya esta ocupado
+                agentesResistenciaLibres.remove(randomIndex);
+                return candidato;
+
+            case SISTEMA:
+
+                randomIndex = rand.nextInt(agentesSistemaLibres.size());
+                candidato = agentesSistemaLibres.get(randomIndex);
+                //se elimina al que ya esta ocupado
+                agentesSistemaLibres.remove(randomIndex);
+                return candidato;
+
+            case JOEPUBLIC:
+                randomIndex = rand.nextInt(agentesJoePublicLibres.size());
+                candidato = agentesJoePublicLibres.get(randomIndex);
+                //se elimina al que ya esta ocupado
+                agentesJoePublicLibres.remove(randomIndex);
+                return candidato;
+
+            default:
+                return null;
+        }
         
     }
     
@@ -130,6 +131,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                 tratarQueryRef(mensaje);
                 break;
             case ACLMessage.REQUEST:
+                tratarRequest(mensaje);
                 break;
             case ACLMessage.AGREE:
                 break;
@@ -147,14 +149,15 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     private void tratarQueryRef(ACLMessage msg){
         
         String content[] = msg.getContent().split(",");
+        // Confirmar (agree)
+        ACLMessage agree = msg.createReply();
+        agree.setPerformative(ACLMessage.AGREE);
+        this.myAgent.send(agree);
+            
         // CASOS EN LOS QUE SE PUEDE RECIBIR UN QUERY_REF
-        
         // ESTADO DEL SISTEMA
-        if (content[0].equals("ESTADOSISTEMA")) {
-            // Confirmar (agree)
-            ACLMessage agree = msg.createReply();
-            agree.setPerformative(ACLMessage.AGREE);
-            this.myAgent.send(agree);
+        if (content[0].equals(tipoMensaje.PEDIRINFORMACION.name())) {
+            
             
             // Seleccionar estado del sistema -> String a parsear, clase... DECIDIR
             // TODO
@@ -167,10 +170,10 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             this.myAgent.send(inform);
         }
         // COMBATIR
-        else if(content[0].equals("COMBATIR")){
+        else if(content[0].equals(tipoMensaje.ATACAR.name())){
             // Determinar el bando de quién ha enviado el mensaje
             Agente a;
-            if(content[1].equals("SISTEMA")){
+            if(content[1].equals(tipoAgente.SISTEMA.name())){
                 // tomar agente random de la resistencia (agentesResistencia)
                 a = elegirRandom(tipoAgente.RESISTENCIA);
                 
@@ -180,20 +183,24 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                  a = elegirRandom(tipoAgente.SISTEMA);
             }
             
-            // Enviar request y esperar respuestas para confirmar al que inició la petición
-            // no se que enviarle...
-            //ACLMessage query = new ACLMessage(ACLMessage.REQUEST);
-            //query.addReceiver(new AID(a.getNombre(), AID.ISLOCALNAME));
-            //query.setContent("Combatir," + String.valueOf(content[2]));
-            //this.myAgent.send(query);
+            /// Informs de arquitecto a agentes:
+            // TIPOAGENTE, nombre
+            ACLMessage inform_result = new ACLMessage(ACLMessage.INFORM_REF);
+            inform_result.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
+            inform_result.setContent(a.getTipoAgente() + "," + a.getNombre());
+            this.myAgent.send(inform_result);
         }
         // RECLUTAR
         else{
             Agente a;
-            Random random = new Random();
             // tomar agente JoePublic random (agentesJoePublic)
+            a = elegirRandom(tipoAgente.JOEPUBLIC);
+            // Enviar tipo agente y su nombre al que quiere reclutar
+            ACLMessage inform_result = new ACLMessage(ACLMessage.INFORM_REF);
+            inform_result.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
+            inform_result.setContent(a.getTipoAgente() + "," + a.getNombre());
+            this.myAgent.send(inform_result);
             
-            // Enviar request y esperar respuestas para confirmar al que inició la petición
         }
         
         
@@ -201,7 +208,162 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     
     // Como resultado del combate o como resultado del reclutamiento
     private void tratarRequest(ACLMessage msg){
-    
+        String content[] = msg.getContent().split(",");
+        
+        if (content[0].equals(tipoMensaje.RESULTADO.name())) {
+            // Confirmar (agree)
+            ACLMessage agree = msg.createReply();
+            agree.setPerformative(ACLMessage.AGREE);
+            this.myAgent.send(agree);
+            
+            Evento e = null;
+            //RESULT COMBATE
+            if(content[2].equals(tipoAccion.COMBATE.name())){
+                if(content[3].equals(tipoResultado.EXITO.name())){
+                    if(content[1].equals(tipoAgente.RESISTENCIA.name())){
+                        //el agente resistencia queda libre
+                        Agente a = new Agente(msg.getSender().getLocalName(),tipoAgente.RESISTENCIA);
+                        agentesResistenciaLibres.add(a);
+                        
+                        //ha matado a uno de sistema
+                        Agente aS = new Agente(content[4], tipoAgente.SISTEMA);
+                        agentesSistema.remove(aS);
+                        
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EXITO);
+                    }
+                    else{
+                        //gana combate agente Sistema
+                        //el agente sistema queda libre
+                        Agente a = new Agente(msg.getSender().getLocalName(),tipoAgente.SISTEMA);
+                        agentesSistemaLibres.add(a);
+                        
+                        //ha matado a uno de resistencia
+                        Agente aR = new Agente(content[4], tipoAgente.RESISTENCIA);
+                        agentesSistema.remove(aR);
+                        
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EXITO);
+                    }
+                }
+                else if(content[3].equals(tipoResultado.FRACASO.name())){
+                    if(content[1].equals(tipoAgente.RESISTENCIA.name())){
+                        //pierde combate agente Resisencia
+                        //el agente sistema queda libre
+                        Agente a = new Agente(content[4],tipoAgente.SISTEMA);
+                        agentesSistemaLibres.add(a);
+                        
+                        //han matado a uno de resistencia
+                        Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
+                        agentesResistencia.remove(aR);
+                        
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.FRACASO);
+                    }
+                    else{
+                        //pierde combate agente Sistema
+                        //el agente resistencia queda libre
+                        Agente a = new Agente(content[4],tipoAgente.RESISTENCIA);
+                        agentesResistenciaLibres.add(a);
+                        
+                        //han matado a uno de sistema
+                        Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
+                        agentesSistema.remove(aS);
+                        
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.FRACASO);
+                    }
+                }
+                 else if(content[3].equals(tipoResultado.EMPATE.name())){
+                     if(content[1].equals(tipoAgente.RESISTENCIA.name())){
+                        //el agente sistema queda libre
+                        Agente a = new Agente(content[4],tipoAgente.SISTEMA);
+                        agentesSistemaLibres.add(a);
+                        //el agente resistencia queda libre
+                        Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
+                        agentesResistenciaLibres.add(aR);
+                        
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EMPATE);                        
+                     }
+                     else{
+                         //el agente sistema queda libre
+                        Agente a = new Agente(msg.getSender().getLocalName(),tipoAgente.SISTEMA);
+                        agentesSistemaLibres.add(a);
+                        //el agente resistencia queda libre
+                        Agente aR = new Agente(content[4], tipoAgente.RESISTENCIA);
+                        agentesResistencia.remove(aR);
+                        
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EMPATE);
+                     }
+                 }
+            }
+            //RESULT RECLUTAMIENTO
+            else{
+                if(content[3].equals(tipoResultado.EXITO.name())){
+                    if(content[1].equals(tipoAgente.RESISTENCIA.name())){
+                        //el agente resistencia queda libre
+                        Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
+                        agentesResistenciaLibres.remove(aR);
+                        //He reclutado a otro de resistencia
+                        aR = new Agente(content[4], tipoAgente.RESISTENCIA);
+                        agentesResistencia.add(aR);
+                        agentesResistenciaLibres.add(aR);
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.EXITO);
+                    }
+                    else if(content[1].equals(tipoAgente.SISTEMA.name())){
+                        //el agente sistema queda libre
+                        Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
+                        agentesSistemaLibres.remove(aS);
+                        //He reclutado a otro de sistema
+                        aS = new Agente(content[4], tipoAgente.SISTEMA);
+                        agentesSistema.add(aS);
+                        agentesSistemaLibres.add(aS);
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.EXITO);
+                    }
+                    
+                }
+                else if(content[3].equals(tipoResultado.FRACASO.name())){
+                    if(content[1].equals(tipoAgente.RESISTENCIA.name())){
+                        //el agente resistencia queda libre
+                        Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
+                        agentesResistenciaLibres.remove(aR);
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO);
+                    }
+                    else if(content[1].equals(tipoAgente.SISTEMA.name())){
+                        //el agente sistema queda libre
+                        Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
+                        agentesSistemaLibres.remove(aS);
+                        //al no reclutarlo mata al joepublic
+                        Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
+                        agentesJoePublic.remove(aJ);
+                        //registro el log
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO);
+                    }
+                }
+                else if(content[3].equals(tipoResultado.ORACULO.name())){
+                    //se elimina oraculo de la lista de Joe Publics
+                    Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
+                    agentesJoePublic.remove(aJ);
+                    //registro el log
+                    e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.ORACULO);
+                }
+
+            }
+            //se mete el evento en el log (lista de eventos)
+            log.add(e);
+            
+            // Inform request
+            ACLMessage inform = msg.createReply();
+            agree.setPerformative(ACLMessage.INFORM);
+            this.myAgent.send(inform);
+            
+        }         
+             
     }
     
     // Sólo se puede producir si el agente a emparejar está ocupado (O SI SE ASIGNA UNO DIRECTAMENTE EN EL QUERY_REF -> BORRAR)
