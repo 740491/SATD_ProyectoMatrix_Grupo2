@@ -1,5 +1,6 @@
 package agentes;
 
+import agentes.MensajesComunes.tipoAgente;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.wrapper.AgentController;
@@ -36,7 +37,7 @@ public class AgenteInit extends Agent {
                     ac.start();
                     agentes_JP.add("joepublic-"+ i);
                 }
-                    ac = cc.createNewAgent("oraculo", "agentes.Oraculo", null);
+                    ac = cc.createNewAgent(tipoAgente.ORACULO.name(), "agentes.AgenteJoePublic", null);
                     ac.start();
                     agentes_JP.add("oraculo");
                     for(String agente:RESISTENCIA_INIT) {

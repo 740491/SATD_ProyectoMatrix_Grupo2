@@ -45,6 +45,8 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     List<Agente> agentesJoePublicLibres;
     
     List<Evento> log;
+    
+    AID resultado;
    
 
     AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, List<Evento> log) {
@@ -80,6 +82,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                 return candidato;
 
             case JOEPUBLIC:
+                int indice_oraculo = encontrarOraculo(agentesJoePublic);
                 randomIndex = rand.nextInt(agentesJoePublicLibres.size());
                 candidato = agentesJoePublicLibres.get(randomIndex);
                 //se elimina al que ya esta ocupado
@@ -91,7 +94,11 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         }
         
     }
-    
+    private int encontrarOraculo(List<Agente> agentesJoePublic) {
+        Agente a = new Agente("oraculo",tipoAgente.JOEPUBLIC);
+        return agentesJoePublic.indexOf(a);
+        
+    }
     /*protected ACLMessage handleQueryRef(ACLMessage queryRef) throws NotUnderstoodException, RefuseException {
         
     }
@@ -143,7 +150,44 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                 break;
         }
         
+        //comprobar si ha terminado la simulación
+        comprobarFinal();
         
+        
+    }
+    
+    private void comprobarFinal() {
+        if(agentesResistencia.isEmpty() || agentesSistema.isEmpty()){
+            boolean recopilador_agree = false;
+            ACLMessage mensaje_resultado = new ACLMessage(ACLMessage.REQUEST);
+            mensaje_resultado.setContent(contenido);
+            mensaje_resultado.addReceiver(resultado);
+            while(!recopilador_agree){
+                ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
+                if(respuesta == null) this.myAgent.send(mensaje_resultado);
+                else if(ACLMessage.AGREE == respuesta.getPerformative()) recopilador_agree = true;
+            }
+            
+            // esperar inform
+            boolean recopilador_inform = false;
+            while(!recopilador_inform){
+                ACLMessage inform_respuesta = this.myAgent.blockingReceive(TIMEOUT);
+
+                // Si salta timeout -> inform_respuesta = null
+                // Reenviar la petición (y no cambiar recopilador_inform)
+                if(inform_respuesta == null){
+                    this.myAgent.send(mensaje_resultado);
+                }
+
+                // Si la respuesta es un "inform" es lo que esperábamos
+                // Salir del bucle (recopilador_inform = true)
+                // Si no es un inform se ignora el mensaje
+                else if(ACLMessage.INFORM == inform_respuesta.getPerformative() ){
+                    recopilador_inform = true;
+                }
+            }
+            this.myAgent.doDelete();
+        }
     }
     
     private void tratarQueryRef(ACLMessage msg){
@@ -195,10 +239,18 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             Agente a;
             // tomar agente JoePublic random (agentesJoePublic)
             a = elegirRandom(tipoAgente.JOEPUBLIC);
+            
             // Enviar tipo agente y su nombre al que quiere reclutar
             ACLMessage inform_result = new ACLMessage(ACLMessage.INFORM_REF);
             inform_result.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
-            inform_result.setContent(a.getTipoAgente() + "," + a.getNombre());
+            if(a.getNombre().equals(tipoAgente.ORACULO.name())){
+                inform_result.setContent(tipoAgente.ORACULO.name() + "," + a.getNombre());
+            }
+            else{
+                inform_result.setContent(a.getTipoAgente().name() + "," + a.getNombre());
+            }
+            
+            
             this.myAgent.send(inform_result);
             
         }
@@ -415,5 +467,9 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
           //      System.out.println("ARQUITECTO: Agent "+failure.getSender().getName()+" failed to perform the requested action");
         //}
     //}   
+
+    
+
+    
     
 }
