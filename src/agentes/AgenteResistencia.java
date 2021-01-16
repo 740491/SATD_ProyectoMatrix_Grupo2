@@ -19,6 +19,7 @@ import java.util.Random;
 import agentes.MensajesComunes.tipoMensaje;
 import agentes.MensajesComunes.tipoResultado;
 import agentes.MensajesComunes.tipoAgente;
+import agentes.MensajesComunes.tipoAccion;
 import agentes.Decisor;
 import agentes.Decisor.tipoDecision;
 import agentes.Decisor.Estrategias;
@@ -108,7 +109,7 @@ public class AgenteResistencia extends Agent {
             else if(ACLMessage.AGREE == mensaje.getPerformative() ){
                 timeouts = MAX_TIMEOUTS * 2;
             }
-            //Nos llega un agente, información, o mensaje de finalizar una acción
+            //Nos llega un agente o información
             else if(ACLMessage.INFORM_REF == mensaje.getPerformative() ){
                 timeouts = MAX_TIMEOUTS;
                 String content[] = mensaje.getContent().split(",");
@@ -127,29 +128,36 @@ public class AgenteResistencia extends Agent {
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent("ConocerOraculo");
                         this.myAgent.send(request);*/
-                }else if(content[0] == "Informacion"){
+                }
+                else if(content[0] == "Informacion"){
                     ocupado = false; 
                     String info = null;
                     decisor.actualizar_info(info);
                     //TODO: Actualizar info
-                }else if(content[0] == "ResultadoCombate"){
+                }
+            }//mensaje de finalizar una acción
+            else if(ACLMessage.INFORM == mensaje.getPerformative() ){
+                ocupado = false; 
+                
+                String content[] = mensaje.getContent().split(",");
+                //Envíar resultado a arquitecto
+                ACLMessage resultado = new ACLMessage(ACLMessage.REQUEST);
+                resultado.addReceiver(arquitecto);
+                resultado.setContent(tipoMensaje.RESULTADO.name() + "," + tipoAgente.RESISTENCIA.name() + "," + 
+                        content[0] + "," + content[1] + resultado.getSender().getLocalName());
+                this.myAgent.send(resultado);
+                
+                if(content[0] == tipoAccion.ATACAR.name()){
                     ocupado = false;
-                    ACLMessage query = new ACLMessage(ACLMessage.REQUEST);
-                    query.addReceiver(arquitecto);
-                    if(content[1] == "EXITO"){
-                        query.setContent("EXITO");
+                    if(content[1] == tipoResultado.EXITO.name()){
                         if(bonus < max_bonus) bonus++;
-                    }else if(content[1]=="EMPATE"){
-                        query.setContent("EMPATE");
+                    }else if(content[1]==tipoResultado.EMPATE.name()){
                         bonus--;
                     }else{
-                        query.setContent("EMPATE");
-                        //morir();
+                        this.myAgent.doDelete();
                     }
-                }else if(content[0] == "Reclutar"){
-                    ocupado = false; 
-                }else if(content[0] == "ConocerOraculo"){
-                    ocupado = false; 
+                }else if(content[0] == tipoAccion.RECLUTAR.name()){
+                }else if(content[0] == tipoAccion.CONOCERORACULO.name()){
                 }else {
                     System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM inesperado: " + content[0]);
                 }
@@ -192,8 +200,8 @@ public class AgenteResistencia extends Agent {
                         if(bonus>max_bonus) bonus=max_bonus;
                         
                         ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
-                        inform.addReceiver(mensaje.getSender());
-                        inform.setContent("ConocerOraculo");
+                        inform.addReceiver(arquitecto);
+                        //TODO
                         this.myAgent.send(inform);
                         
                     }

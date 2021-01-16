@@ -15,24 +15,29 @@ public class MensajesComunes {
     
     // RESULTADO, tipoAgente, tipoAccion, tipoResultado
     
+    // Mensajes con arquitecto
     enum tipoMensaje{
-        // Arquitecto - Agentes
         RESULTADO, //tipoAgente, tipoAccion, tipoResultado, nombreRival  (tipoAccion = ATACAR,RECLUTAR)
         PEDIRINFORMACION, //tipoAgente
         ATACAR, //tipoAgente, bonus
         RECLUTAR, //tipoAgente, bonus
-        CONOCERORACULO
     }
-    
     /// Informs de arquitecto a agentes:
     // TIPOAGENTE, nombre
     // PEDIRINFORMACION, informacion    (respuesta)
     
-    
     // Mensajes entre agentes: 
-    // REQUEST-             AGREE           INFORM
-    // ATACAR,bonus        ATACAR          ATACAR,tipoResultado
-    // RECLUTAR,bonus      RECLUTAR        RECLUTAR,tipoResultado
+        enum tipoAccion{
+        COMBATE,
+        RECLUTAMIENTO,
+        ORACULO
+    }
+    // REQUEST                           AGREE           INFORM
+    // ATACAR, tipoAgente, bonus         ATACAR          ATACAR,tipoResultado
+    
+    // RECLUTAR,tipoAgente, bonus        RECLUTAR        RECLUTAR,tipoResultado
+    // CONOCERORACULO,tipoAgente         CONOCERORACULO  CONOCERORACULO
+        // Mensajes entre agentes
     
     // Se utiliza para indicar EMISOR
     enum tipoAgente{
@@ -48,10 +53,4 @@ public class MensajesComunes {
         FRACASO,
         ORACULO 
     }
-    
-    enum tipoAccion{
-        ATACAR,
-        RECLUTAR
-    }
-  
 }
