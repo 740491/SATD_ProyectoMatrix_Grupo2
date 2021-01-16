@@ -23,6 +23,8 @@ import agentes.MensajesComunes.tipoAccion;
 import agentes.Decisor;
 import agentes.Decisor.tipoDecision;
 import agentes.Decisor.Estrategias;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class AgenteResistencia extends Agent {
@@ -31,7 +33,7 @@ public class AgenteResistencia extends Agent {
     private final int TIMEOUT = 2000; //ms
     
     //---------------------------------- VARIABLES GLOBALES ----------------------------------
-    private Decisor decisor = new Decisor(Estrategias.ALEATORIA); // IMPORTANTE: Estrategia a utilizar
+    private Decisor decisor = new Decisor(Estrategias.ATACAR); // IMPORTANTE: Estrategia a utilizar
     private int bonus;
     private int max_bonus;
     private int timeouts;
@@ -82,6 +84,14 @@ public class AgenteResistencia extends Agent {
         
         @Override
         public void action() {
+            
+            // HACIENDO COSAS EN MATRIX...
+            try {
+                Thread.sleep(rand.nextInt(1500));
+            } catch (InterruptedException ex) {
+                Logger.getLogger(AgenteResistencia.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             //Leer mensaje (con block corto para hacer de espera entre acciones)
             ACLMessage mensaje = myAgent.blockingReceive(TIMEOUT);
 
@@ -120,8 +130,14 @@ public class AgenteResistencia extends Agent {
             }
             //Nos llega un agente o información
             else if(ACLMessage.INFORM_REF == mensaje.getPerformative() ){
+                
+                System.out.println("LLEGO");
+                
                 timeouts = MAX_TIMEOUTS;
                 String content[] = mensaje.getContent().split(",");
+                
+                System.out.println(content[0] + "   " + content[1]);
+                
                 if(content[0] == tipoAgente.SISTEMA.name()){ //TODO: SISTEMA
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
@@ -224,6 +240,7 @@ public class AgenteResistencia extends Agent {
     
     /*Asignacion de comportamientos*/
     protected void setup() {
+        System.out.println("Agente Resistencia "+ getLocalName()+" creado");
         Object[] args = getArguments();
         bonus = 50;
         ocupado = false;

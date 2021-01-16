@@ -62,9 +62,24 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     }
     
     private Agente elegirRandom(tipoAgente tipo){
-       Random rand = new Random();
-       Agente candidato;
-       int randomIndex;
+        Random rand = new Random();
+        Agente candidato;
+        int randomIndex;
+        System.out.println("-- ELEGIR RANDOM --");
+        try{
+           /*System.out.println(agentesResistenciaLibres);
+           System.out.println(agentesSistemaLibres);
+           System.out.println(agentesJoePublicLibres);
+           System.out.println("------------------------");
+           System.out.println(agentesResistencia);
+           System.out.println(agentesSistema);
+           System.out.println(agentesJoePublic);
+            */
+           
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
         switch (tipo) {
             case RESISTENCIA:
                 randomIndex = rand.nextInt(agentesResistenciaLibres.size());
@@ -74,7 +89,6 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                 return candidato;
 
             case SISTEMA:
-
                 randomIndex = rand.nextInt(agentesSistemaLibres.size());
                 candidato = agentesSistemaLibres.get(randomIndex);
                 //se elimina al que ya esta ocupado
@@ -231,8 +245,9 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             // TIPOAGENTE, nombre
             ACLMessage inform_result = new ACLMessage(ACLMessage.INFORM_REF);
             inform_result.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
-            inform_result.setContent(a.getTipoAgente() + "," + a.getNombre());
+            inform_result.setContent(a.getTipoAgente().name() + "," + a.getNombre());
             this.myAgent.send(inform_result);
+            System.out.println("Mando: " + inform_result.getContent() + " a " + msg.getSender().getLocalName());
         }
         // RECLUTAR
         else{
@@ -407,7 +422,9 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
 
             }
             //se mete el evento en el log (lista de eventos)
+            System.out.println("-Evento: " + e);
             log.add(e);
+            
             
             // Inform request
             ACLMessage inform = msg.createReply();

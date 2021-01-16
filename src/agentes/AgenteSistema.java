@@ -23,6 +23,8 @@ import agentes.MensajesComunes.tipoAccion;
 import agentes.Decisor;
 import agentes.Decisor.tipoDecision;
 import agentes.Decisor.Estrategias;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class AgenteSistema extends Agent {
@@ -31,7 +33,7 @@ public class AgenteSistema extends Agent {
     private final int TIMEOUT = 2000; //ms
     
     //---------------------------------- VARIABLES GLOBALES ----------------------------------
-    private Decisor decisor = new Decisor(Estrategias.ALEATORIA); // IMPORTANTE: Estrategia a utilizar
+    private Decisor decisor = new Decisor(Estrategias.ATACAR); // IMPORTANTE: Estrategia a utilizar
     private int bonus;
     private int max_bonus;
     private int timeouts;
@@ -82,6 +84,14 @@ public class AgenteSistema extends Agent {
         
         @Override
         public void action() {
+            
+            // HACIENDO COSAS EN MATRIX...
+            try {
+                Thread.sleep(rand.nextInt(1500));
+            } catch (InterruptedException ex) {
+                Logger.getLogger(AgenteResistencia.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             //Leer mensaje (con block corto para hacer de espera entre acciones)
             ACLMessage mensaje = myAgent.blockingReceive(TIMEOUT);
 
@@ -120,25 +130,32 @@ public class AgenteSistema extends Agent {
             }
             //Nos llega un agente o información
             else if(ACLMessage.INFORM_REF == mensaje.getPerformative() ){
+                
+                System.out.println("LLEGO");
+                
                 timeouts = MAX_TIMEOUTS;
                 String content[] = mensaje.getContent().split(",");
-                if(content[0] == tipoAgente.SISTEMA.name()){ //TODO: SISTEMA
+                
+                System.out.println(content[0] + "   " + content[1]);
+                
+                if(content[0].equals(tipoAgente.RESISTENCIA.name())){ //TODO: SISTEMA
+                        System.out.println("ENTROOOOO");
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent(tipoAccion.COMBATE + "," + tipoAgente.SISTEMA + "," + String.valueOf(bonus));
                         this.myAgent.send(request);
-                }else if(content[0] == tipoAgente.JOEPUBLIC.name()){
+                }else if(content[0].equals(tipoAgente.JOEPUBLIC.name())){
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent(tipoAccion.RECLUTAMIENTO.name() + "," + tipoAgente.SISTEMA   + String.valueOf(bonus));
                         this.myAgent.send(request);
-                }else if(content[0] == tipoAgente.ORACULO.name()){ // ------------------------- 
+                }else if(content[0].equals(tipoAgente.ORACULO.name())){ // ------------------------- 
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent(tipoAccion.CONOCERORACULO.name() + "," + tipoAgente.SISTEMA);
                         this.myAgent.send(request);
                 }
-                else if(content[0] == tipoMensaje.PEDIRINFORMACION.name()){ //TODO: Actualizar cuando se haga el decisor
+                else if(content[0].equals(tipoMensaje.PEDIRINFORMACION.name())){ //TODO: Actualizar cuando se haga el decisor
                     ocupado = false; 
                     String info = content[1];
                     decisor.actualizar_info(info);
@@ -171,9 +188,11 @@ public class AgenteSistema extends Agent {
                 ocupado = false;
             }
             else if(ACLMessage.REQUEST == mensaje.getPerformative() ){
+                System.out.println("Me llega el REQUEST");
                 String content[] = mensaje.getContent().split(",");
+                System.out.println(content[0]);
                 if(!ocupado){//Si estamos libres -> tratar
-                    if(content[0] == tipoAccion.COMBATE.name()){ //Combate
+                    if(content[0].equals(tipoAccion.COMBATE.name())){ //Combate
                         //Confirmar
                         ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
                         agree.addReceiver(mensaje.getSender());
@@ -195,7 +214,7 @@ public class AgenteSistema extends Agent {
                         if(res==tipoResultado.FRACASO.name()){ //Morir
                             myAgent.doDelete();
                         }
-                    }else if(content[0] == tipoAccion.CONOCERORACULO.name() && (this.myAgent.getLocalName().contains("Neo") || this.myAgent.getLocalName().contains("Smith"))){
+                    }else if(content[0].equals(tipoAccion.CONOCERORACULO.name()) && (this.myAgent.getLocalName().contains("Neo") || this.myAgent.getLocalName().contains("Smith"))){
                         ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
                         agree.setContent(tipoAccion.CONOCERORACULO.name());
                         agree.addReceiver(mensaje.getSender());
@@ -223,7 +242,9 @@ public class AgenteSistema extends Agent {
     
     /*Asignacion de comportamientos*/
     protected void setup() {
+        System.out.println("Agente Sistema "+ getLocalName()+" creado");
         Object[] args = getArguments();
+        System.out.println("Argumento: " + args[0]);
         bonus = 50;
         ocupado = false;
         rand = new Random();

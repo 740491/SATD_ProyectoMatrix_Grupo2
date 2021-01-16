@@ -83,7 +83,7 @@ public class AgenteArquitecto extends Agent {
         // Dar valor a los agentes del Sistema
         for(String agente:SISTEMA_INIT) {
             Agente s = new Agente((String)agente, tipoAgente.SISTEMA);
-            agentesResistencia.add(s);
+            agentesSistema.add(s);
         }
         
         // Dar valor a los agentes JoePublic, pasados como argumentos

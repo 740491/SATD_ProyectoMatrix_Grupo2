@@ -9,11 +9,13 @@ import java.util.Random;
 
 
 public class Decisor {
+
     public enum Estrategias{
         ALEATORIA,
         ESTRATEGIA1,
         ESTRATEGIA2,
         ESTRATEGIA3,
+        ATACAR
     }
     
     // Acciones que deciden hacer los AgentesSistema, y Resistencia
@@ -47,6 +49,9 @@ public class Decisor {
                 break;
             case ESTRATEGIA3:
                 resultado = estrategia3();
+                break;
+            case ATACAR:
+                resultado = atacar();
                 break;
             default:
                 resultado = estrategia_aleatoria();
@@ -96,6 +101,11 @@ public class Decisor {
         }else{
             return tipoDecision.RECLUTAMIENTO;
         }
+    }
+    
+    // SE DECIDE ATACAR SIEMPRE
+    public tipoDecision atacar(){
+        return tipoDecision.COMBATE;
     }
     
 }
