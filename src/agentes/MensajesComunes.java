@@ -17,7 +17,7 @@ public class MensajesComunes {
     
     // Mensajes con arquitecto
     enum tipoMensaje{
-        RESULTADO, //tipoAgente, tipoAccion, tipoResultado, nombreRival  (tipoAccion = ATACAR,RECLUTAR)
+        RESULTADO, //tipoAgente, tipoAccion, tipoResultado, nombreRival
         PEDIRINFORMACION, //tipoAgente
         ATACAR, //tipoAgente, bonus
         RECLUTAR, //tipoAgente, bonus
