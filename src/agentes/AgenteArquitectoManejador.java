@@ -367,7 +367,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         agentesSistema.remove(aS);
                         
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EXITO, msg.getSender().getLocalName());
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EXITO, msg.getSender().getLocalName(), content[4]);
                     }
                     else{
                         //gana combate agente Sistema
@@ -380,7 +380,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         agentesResistencia.remove(aR);
                         
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EXITO, msg.getSender().getLocalName());
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EXITO, msg.getSender().getLocalName(), content[4]);
                     }
                 }
                 else if(content[3].equals(tipoResultado.FRACASO.name())){
@@ -395,7 +395,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         agentesResistencia.remove(aR);
                         
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.FRACASO, msg.getSender().getLocalName());
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                     }
                     else{
                         //pierde combate agente Sistema
@@ -408,7 +408,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         agentesSistema.remove(aS);
                         
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.FRACASO, msg.getSender().getLocalName());
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                     }
                 }
                  else if(content[3].equals(tipoResultado.EMPATE.name())){
@@ -421,7 +421,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         agentesResistenciaLibres.add(aR);
                         
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EMPATE, msg.getSender().getLocalName());                        
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EMPATE, msg.getSender().getLocalName(), content[4]);                        
                      }
                      else{
                          //el agente sistema queda libre
@@ -432,7 +432,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         agentesResistencia.add(aR);
                         
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EMPATE, msg.getSender().getLocalName());
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EMPATE, msg.getSender().getLocalName(), content[4]);
                      }
                  }
             }
@@ -455,7 +455,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         ac = cc.createNewAgent(aR.getNombre(), "agentes.AgenteResistencia", argumentos);
                         ac.start();
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.EXITO, msg.getSender().getLocalName());
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.EXITO, msg.getSender().getLocalName(), content[4]);
                     }
                     else if(content[1].equals(tipoAgente.SISTEMA.name())){
                         //el agente sistema queda libre
@@ -469,7 +469,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         ac = cc.createNewAgent(aS.getNombre(), "agentes.AgenteSistema", argumentos);
                         ac.start();
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.EXITO, msg.getSender().getLocalName());
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.EXITO, msg.getSender().getLocalName(), content[4]);
                     }
                     
                 }
@@ -479,7 +479,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
                         agentesResistenciaLibres.add(aR);
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName());
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                     }
                     else if(content[1].equals(tipoAgente.SISTEMA.name())){
                         //el agente sistema queda libre
@@ -489,7 +489,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
                         agentesJoePublic.remove(aJ);
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName());
+                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                     }
                 }
                 else if(content[3].equals(tipoResultado.ORACULO.name())){
@@ -497,7 +497,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                     Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
                     agentesJoePublic.remove(aJ);
                     //registro el log
-                    e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.ORACULO, msg.getSender().getLocalName());
+                    e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.ORACULO, msg.getSender().getLocalName(), content[4]);
                 }
 
             }
