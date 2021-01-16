@@ -31,4 +31,35 @@ public class Agente {
     public String toString() {
         return "Agente{" + "nombre= " + nombre + '}';
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + (this.tipo != null ? this.tipo.hashCode() : 0);
+        hash = 29 * hash + (this.nombre != null ? this.nombre.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Agente other = (Agente) obj;
+        if ((this.nombre == null) ? (other.nombre != null) : !this.nombre.equals(other.nombre)) {
+            return false;
+        }
+        if (this.tipo != other.tipo) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

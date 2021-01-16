@@ -131,15 +131,10 @@ public class AgenteSistema extends Agent {
             //Nos llega un agente o información
             else if(ACLMessage.INFORM_REF == mensaje.getPerformative() ){
                 
-                System.out.println("LLEGO");
-                
                 timeouts = MAX_TIMEOUTS;
                 String content[] = mensaje.getContent().split(",");
                 
-                System.out.println(content[0] + "   " + content[1]);
-                
                 if(content[0].equals(tipoAgente.RESISTENCIA.name())){ //TODO: SISTEMA
-                        System.out.println("ENTROOOOO");
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent(tipoAccion.COMBATE + "," + tipoAgente.SISTEMA + "," + String.valueOf(bonus));

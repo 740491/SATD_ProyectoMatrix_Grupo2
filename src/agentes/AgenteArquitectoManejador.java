@@ -21,6 +21,7 @@ import jade.proto.AchieveREResponder;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.domain.FIPAAgentManagement.FailureException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -54,9 +55,18 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         this.agentesSistema = agentesSistema;
         this.agentesJoePublic = agentesJoePublic;
         
-        this.agentesResistenciaLibres = agentesResistencia;
-        this.agentesSistemaLibres = agentesSistema;
-        this.agentesJoePublicLibres = agentesJoePublic;
+        this.agentesResistenciaLibres = new ArrayList();
+        for(Agente agente:agentesResistencia){
+            agentesResistenciaLibres.add(agente);
+        }
+        this.agentesSistemaLibres = new ArrayList();
+        for(Agente agente:agentesSistema){
+            agentesSistemaLibres.add(agente);
+        }
+        this.agentesJoePublicLibres = new ArrayList();
+        for(Agente agente:agentesJoePublic){
+            agentesJoePublicLibres.add(agente);
+        }
         
         this.log = log;
     }
@@ -65,7 +75,6 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         Random rand = new Random();
         Agente candidato;
         int randomIndex;
-        System.out.println("-- ELEGIR RANDOM --");
         try{
            /*System.out.println(agentesResistenciaLibres);
            System.out.println(agentesSistemaLibres);
@@ -121,8 +130,35 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     
     @Override
     public void action() {
+        
+        System.out.println("AL COMIENZO");
+        System.out.println(agentesResistenciaLibres);
+        System.out.println(agentesSistemaLibres);
+        System.out.println(agentesJoePublicLibres);
+        System.out.println("------------------------");
+        System.out.println(agentesResistencia);
+        System.out.println(agentesSistema);
+        System.out.println(agentesJoePublic);
+        
         //Leer mensaje (con block corto para hacer de espera entre acciones)
         ACLMessage mensaje = myAgent.blockingReceive();
+        
+        // QUITAR DE LIBRES (si no se había quitado ya) AL QUE ENVÍA EL MENSAJE
+        Agente auxiliarJoe = new Agente(mensaje.getSender().getLocalName(),tipoAgente.JOEPUBLIC);
+        Agente auxiliarResistencia = new Agente(mensaje.getSender().getLocalName(),tipoAgente.RESISTENCIA);
+        Agente auxiliarSistema = new Agente(mensaje.getSender().getLocalName(),tipoAgente.SISTEMA);
+        if(agentesJoePublicLibres.indexOf(auxiliarJoe) > 0){
+            System.out.println("Era JoePublic");
+            agentesJoePublicLibres.remove(auxiliarJoe);
+        }
+        else if(agentesResistenciaLibres.indexOf(auxiliarResistencia) > 0){
+            System.out.println("Era Resistencia");
+            agentesResistenciaLibres.remove(auxiliarResistencia);
+        }
+        else if(agentesSistemaLibres.indexOf(auxiliarSistema) > 0){
+            System.out.println("Era Sistema");
+            agentesSistemaLibres.remove(auxiliarSistema);
+        }
         /*
         Mensajes:
             CON ARQUITECTO:
@@ -152,6 +188,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                 tratarQueryRef(mensaje);
                 break;
             case ACLMessage.REQUEST:
+                System.out.println("F");
                 tratarRequest(mensaje);
                 break;
             case ACLMessage.AGREE:
@@ -167,11 +204,20 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         //comprobar si ha terminado la simulación
         comprobarFinal();
         
+        System.out.println("AL FINAL");
+        System.out.println(agentesResistenciaLibres);
+        System.out.println(agentesSistemaLibres);
+        System.out.println(agentesJoePublicLibres);
+        System.out.println("------------------------");
+        System.out.println(agentesResistencia);
+        System.out.println(agentesSistema);
+        System.out.println(agentesJoePublic);
         
     }
     
     private void comprobarFinal() {
         if(agentesResistencia.isEmpty() || agentesSistema.isEmpty()){
+            System.out.println("ES EL FINAL");
             boolean recopilador_agree = false;
             ACLMessage mensaje_resultado = new ACLMessage(ACLMessage.REQUEST);
             mensaje_resultado.setContent(log.toString());
@@ -247,7 +293,6 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             inform_result.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
             inform_result.setContent(a.getTipoAgente().name() + "," + a.getNombre());
             this.myAgent.send(inform_result);
-            System.out.println("Mando: " + inform_result.getContent() + " a " + msg.getSender().getLocalName());
         }
         // RECLUTAR
         else{
@@ -275,7 +320,9 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     
     // Como resultado del combate o como resultado del reclutamiento
     private void tratarRequest(ACLMessage msg){
+        System.out.println("REQUEST ARQUITECTO");
         String content[] = msg.getContent().split(",");
+        System.out.println("De: " + content[0]);
         
         if (content[0].equals(tipoMensaje.RESULTADO.name())) {
             // Confirmar (agree)

@@ -30,6 +30,49 @@ public class Evento {
     public String toString() {
         return "Evento{" + "agentesResistencia= " + agentesResistencia.toString() + ", agentesSistema= " + agentesSistema.toString() + ", agentesJoePublic= " + agentesJoePublic.toString() + ", accion=" + accion + ", resultado=" + resultado + "};";
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + (this.agentesResistencia != null ? this.agentesResistencia.hashCode() : 0);
+        hash = 97 * hash + (this.agentesSistema != null ? this.agentesSistema.hashCode() : 0);
+        hash = 97 * hash + (this.agentesJoePublic != null ? this.agentesJoePublic.hashCode() : 0);
+        hash = 97 * hash + (this.accion != null ? this.accion.hashCode() : 0);
+        hash = 97 * hash + (this.resultado != null ? this.resultado.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Evento other = (Evento) obj;
+        if (this.agentesResistencia != other.agentesResistencia && (this.agentesResistencia == null || !this.agentesResistencia.equals(other.agentesResistencia))) {
+            return false;
+        }
+        if (this.agentesSistema != other.agentesSistema && (this.agentesSistema == null || !this.agentesSistema.equals(other.agentesSistema))) {
+            return false;
+        }
+        if (this.agentesJoePublic != other.agentesJoePublic && (this.agentesJoePublic == null || !this.agentesJoePublic.equals(other.agentesJoePublic))) {
+            return false;
+        }
+        if (this.accion != other.accion) {
+            return false;
+        }
+        if (this.resultado != other.resultado) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     
     
 }

@@ -131,12 +131,8 @@ public class AgenteResistencia extends Agent {
             //Nos llega un agente o información
             else if(ACLMessage.INFORM_REF == mensaje.getPerformative() ){
                 
-                System.out.println("LLEGO");
-                
                 timeouts = MAX_TIMEOUTS;
                 String content[] = mensaje.getContent().split(",");
-                
-                System.out.println(content[0] + "   " + content[1]);
                 
                 if(content[0] == tipoAgente.SISTEMA.name()){ //TODO: SISTEMA
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);

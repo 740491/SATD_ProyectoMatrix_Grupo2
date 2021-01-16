@@ -44,7 +44,7 @@ public class AgenteJoePublic extends Agent {
                     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                     /*RECLUTAR,tipoAgente, bonus (prob reclutamiento), RECLUTAR (exito o fracaso)*/
                     request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                    request.setContent();
+                    //request.setContent();
                     
                     this.myAgent.send(request);
                 }else if(content[0].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
@@ -53,7 +53,7 @@ public class AgenteJoePublic extends Agent {
                     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                     
                     request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                    request.setContent();
+                    //request.setContent();
                     
                     this.myAgent.send(request);
                 }
