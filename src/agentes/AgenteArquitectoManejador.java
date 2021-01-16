@@ -377,7 +377,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         
                         //ha matado a uno de resistencia
                         Agente aR = new Agente(content[4], tipoAgente.RESISTENCIA);
-                        agentesSistema.remove(aR);
+                        agentesResistencia.remove(aR);
                         
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EXITO, msg.getSender().getLocalName());
