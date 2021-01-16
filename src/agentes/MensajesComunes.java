@@ -29,8 +29,10 @@ public class MensajesComunes {
     // PEDIRINFORMACION, informacion    (respuesta)
     
     
-    // Mensajes entre agentes:
-    // ATACAR, bonus    -   
+    // Mensajes entre agentes: 
+    // REQUEST-             AGREE           INFORM
+    // ATACAR,bonus        ATACAR          ATACAR,tipoResultado
+    // RECLUTAR,bonus      RECLUTAR        RECLUTAR,tipoResultado
     
     // Se utiliza para indicar EMISOR
     enum tipoAgente{
