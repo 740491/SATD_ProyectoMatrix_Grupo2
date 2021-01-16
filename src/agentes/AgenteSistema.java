@@ -207,7 +207,7 @@ public class AgenteSistema extends Agent {
             else if(ACLMessage.REFUSE == mensaje.getPerformative() ){
                 ocupado = false;
                 if(mensaje.getContent().equals("DESOCUPATE")){
-                    avisar_arquitecto(tipoMensaje.ESTOYLIBRE.name() + "," + tipoAgente.RESISTENCIA.name());
+                    avisar_arquitecto(tipoMensaje.ESTOYLIBRE.name() + "," + tipoAgente.SISTEMA.name());
                 }
             }
             else if(ACLMessage.REQUEST == mensaje.getPerformative() ){
