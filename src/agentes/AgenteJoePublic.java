@@ -5,6 +5,7 @@
  */
 package agentes;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.FIPANames;
@@ -37,15 +38,23 @@ public class AgenteJoePublic extends Agent {
         
             if(ACLMessage.REQUEST == mensaje.getPerformative() ){
                 String content[] = mensaje.getContent().split(",");
-                if(content[0] == MensajesComunes.tipoAgente.SISTEMA.name()){
+                if(content[0].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
                     /*Se recibe el REQUEST del Agente Sistema*/
+                    System.out.println("El agente " + this.myAgent.getName() + " es de tipo " + content[0]);
                     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+                    /*RECLUTAR,tipoAgente, bonus (prob reclutamiento), RECLUTAR (exito o fracaso)*/
+                    request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
+                    request.setContent();
                     
                     this.myAgent.send(request);
-                }else if(content[0] == MensajesComunes.tipoAgente.RESISTENCIA.name()){
+                }else if(content[0].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
                     /*Se recibe el REQUEST del Agente Resistencia*/
+                    System.out.println("El agente " + this.myAgent.getName() + " es de tipo " + content[0]);
                     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-                
+                    
+                    request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
+                    request.setContent();
+                    
                     this.myAgent.send(request);
                 }
             }
