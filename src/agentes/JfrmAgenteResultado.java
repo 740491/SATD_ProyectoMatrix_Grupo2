@@ -23,6 +23,7 @@ public class JfrmAgenteResultado extends javax.swing.JFrame {
     }
 
     public void mostrarResultado(String str){		
+		//Imprime el string
 		jtxtAreaResultado.setText(str);
     }
     
