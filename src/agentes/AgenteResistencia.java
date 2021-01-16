@@ -27,7 +27,7 @@ import agentes.Decisor.Estrategias;
 
 public class AgenteResistencia extends Agent {
     //---------------------------------- CONSTANTES ----------------------------------
-    private final int MAX_TIMEOUTS = 5;
+    private final int MAX_TIMEOUTS = 3;
     private final int TIMEOUT = 2000; //ms
     
     //---------------------------------- VARIABLES GLOBALES ----------------------------------
@@ -113,41 +113,40 @@ public class AgenteResistencia extends Agent {
             else if(ACLMessage.INFORM_REF == mensaje.getPerformative() ){
                 timeouts = MAX_TIMEOUTS;
                 String content[] = mensaje.getContent().split(",");
-                if(content[0] == "RESISTENCIA"){
+                if(content[0] == tipoAgente.SISTEMA.name()){ //TODO: SISTEMA
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                        request.setContent("Combatir," + String.valueOf(bonus));
+                        request.setContent(tipoAccion.COMBATE + "," + tipoAgente.RESISTENCIA + "," + String.valueOf(bonus));
                         this.myAgent.send(request);
-                }else if(content[0] == "JOEPUBLIC"){
+                }else if(content[0] == tipoAgente.JOEPUBLIC.name()){
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                        request.setContent("Reclutar-Resistencia" + String.valueOf(bonus));
+                        request.setContent(tipoAccion.RECLUTAMIENTO.name() + "," + tipoAgente.RESISTENCIA   + String.valueOf(bonus));
                         this.myAgent.send(request);
-                /*else if(content[0] == "ORACULO"){ // ------------------------- 
+                }else if(content[0] == tipoAgente.ORACULO.name()){ // ------------------------- 
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                        request.setContent("ConocerOraculo");
-                        this.myAgent.send(request);*/
+                        request.setContent(tipoAccion.CONOCERORACULO.name() + "," + tipoAgente.RESISTENCIA);
+                        this.myAgent.send(request);
                 }
-                else if(content[0] == "Informacion"){
+                else if(content[0] == tipoMensaje.PEDIRINFORMACION.name()){ //TODO: Actualizar cuando se haga el decisor
                     ocupado = false; 
-                    String info = null;
+                    String info = content[1];
                     decisor.actualizar_info(info);
-                    //TODO: Actualizar info
                 }
             }//mensaje de finalizar una acción
             else if(ACLMessage.INFORM == mensaje.getPerformative() ){
                 ocupado = false; 
                 
                 String content[] = mensaje.getContent().split(",");
-                //Envíar resultado a arquitecto
+                //Envíar resultado a arquitecto TODO: COMPROBAR RECEPCION CON BUCLE
                 ACLMessage resultado = new ACLMessage(ACLMessage.REQUEST);
                 resultado.addReceiver(arquitecto);
                 resultado.setContent(tipoMensaje.RESULTADO.name() + "," + tipoAgente.RESISTENCIA.name() + "," + 
                         content[0] + "," + content[1] + resultado.getSender().getLocalName());
                 this.myAgent.send(resultado);
                 
-                if(content[0] == tipoAccion.ATACAR.name()){
+                if(content[0] == tipoAccion.COMBATE.name()){
                     ocupado = false;
                     if(content[1] == tipoResultado.EXITO.name()){
                         if(bonus < max_bonus) bonus++;
@@ -156,7 +155,7 @@ public class AgenteResistencia extends Agent {
                     }else{
                         this.myAgent.doDelete();
                     }
-                }else if(content[0] == tipoAccion.RECLUTAR.name()){
+                }else if(content[0] == tipoAccion.RECLUTAMIENTO.name()){
                 }else if(content[0] == tipoAccion.CONOCERORACULO.name()){
                 }else {
                     System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM inesperado: " + content[0]);
@@ -165,10 +164,10 @@ public class AgenteResistencia extends Agent {
             else if(ACLMessage.REFUSE == mensaje.getPerformative() ){
                 ocupado = false;
             }
-            else if(ACLMessage.REQUEST == mensaje.getPerformative() ){ //Mensaje de petición de combate
+            else if(ACLMessage.REQUEST == mensaje.getPerformative() ){
                 String content[] = mensaje.getContent().split(",");
-                if(!ocupado){
-                    if(!ocupado){ //Si estamos libres -> tratar
+                if(!ocupado){//Si estamos libres -> tratar
+                    if(content[0] == tipoAccion.COMBATE.name()){ //Combate
                         //Confirmar
                         ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
                         agree.addReceiver(mensaje.getSender());
@@ -190,9 +189,9 @@ public class AgenteResistencia extends Agent {
                         if(res==tipoResultado.FRACASO.name()){ //Morir
                             myAgent.doDelete();
                         }
-                    }else if(content[0] == tipoMensaje.CONOCERORACULO.name() && (this.myAgent.getLocalName().contains("Neo") || this.myAgent.getLocalName().contains("Smith"))){
+                    }else if(content[0] == tipoAccion.CONOCERORACULO.name() && (this.myAgent.getLocalName().contains("Neo") || this.myAgent.getLocalName().contains("Smith"))){
                         ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
-                        agree.setContent(tipoMensaje.CONOCERORACULO.name());
+                        agree.setContent(tipoAccion.CONOCERORACULO.name());
                         agree.addReceiver(mensaje.getSender());
                         this.myAgent.send(agree);
                         
@@ -200,10 +199,13 @@ public class AgenteResistencia extends Agent {
                         if(bonus>max_bonus) bonus=max_bonus;
                         
                         ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
-                        inform.addReceiver(arquitecto);
-                        //TODO
+                        agree.setContent(tipoAccion.CONOCERORACULO.name());
+                        inform.addReceiver(mensaje.getSender());
+                        
                         this.myAgent.send(inform);
                         
+                    }else {
+                        System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe REQUEST inesperado: " + content[0]);
                     }
                 }else{//Si no -> Rechazar
                         ACLMessage respuesta = new ACLMessage(ACLMessage.REFUSE);

@@ -33,8 +33,7 @@ public class MensajesComunes {
         CONOCERORACULO
     }
     // REQUEST                           AGREE           INFORM
-    // ATACAR, tipoAgente, bonus         ATACAR          ATACAR,tipoResultado
-    
+    // COMBATE, tipoAgente, bonus         ATACAR          ATACAR,tipoResultado
     // RECLUTAMIENTO,tipoAgente, bonus   RECLUTAMIENTO   RECLUTAMIENTO,tipoResultado
     // CONOCERORACULO,tipoAgente         CONOCERORACULO  CONOCERORACULO, ORACULO
     
