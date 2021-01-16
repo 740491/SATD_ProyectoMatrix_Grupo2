@@ -47,7 +47,7 @@ public class AgenteSistema extends Agent {
     public class Sistema_behaviour extends CyclicBehaviour {
 
         //Avisa al arquitecto con bucles para reintentar y todo
-        public void avisar_arquitecto(String contenido){ //TODO:
+        public void avisar_arquitecto(String contenido){
             boolean recopilador_agree = false;
             boolean recopilador_inform = false;
             
@@ -88,7 +88,7 @@ public class AgenteSistema extends Agent {
         public tipoResultado rotar(String res1){
             if(res1.equals(tipoResultado.EXITO.name())){
                 return tipoResultado.FRACASO;
-            }else if(res1.equals(tipoResultado.EXITO.name())){
+            }else if(res1.equals(tipoResultado.FRACASO.name())){
                 return tipoResultado.EXITO;
             }else{
                 return tipoResultado.EMPATE;
@@ -117,7 +117,7 @@ public class AgenteSistema extends Agent {
                     if(dec == tipoDecision.COMBATE){
                         ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
                         query.addReceiver(arquitecto);
-                        query.setContent(tipoMensaje.ATACAR.name() + "," + tipoAgente.SISTEMA.name() + "," + Integer.toString(bonus));//TODO: AgenteSistema
+                        query.setContent(tipoMensaje.ATACAR.name() + "," + tipoAgente.SISTEMA.name() + "," + Integer.toString(bonus));
                         this.myAgent.send(query);
 
                         timeouts = MAX_TIMEOUTS;
@@ -136,11 +136,15 @@ public class AgenteSistema extends Agent {
                 }
                 else{
                     timeouts--;
-                    if(timeouts == 0) System.out.println("SALTA TIMEOUT!!!!"); ocupado = false; // Se acabo el tiempo de espera
+                    if(timeouts == 0){
+                        System.out.println("SALTA TIMEOUT!!!!");
+                        ocupado = false;
+                        avisar_arquitecto(tipoMensaje.ESTOYLIBRE.name() + "," + tipoAgente.SISTEMA.name());
+                    }
                 }
             }
             else if(ACLMessage.AGREE == mensaje.getPerformative() ){
-                timeouts = MAX_TIMEOUTS * 2;
+                timeouts = MAX_TIMEOUTS;
             }
             //Nos llega un agente o información
             else if(ACLMessage.INFORM_REF == mensaje.getPerformative() ){
@@ -148,7 +152,7 @@ public class AgenteSistema extends Agent {
                 timeouts = MAX_TIMEOUTS;
                 String content[] = mensaje.getContent().split(",");
                 
-                if(content[0].equals(tipoAgente.RESISTENCIA.name())){ //TODO: SISTEMA
+                if(content[0].equals(tipoAgente.RESISTENCIA.name())){
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent(tipoAccion.COMBATE + "," + tipoAgente.SISTEMA + "," + String.valueOf(bonus));
@@ -222,7 +226,7 @@ public class AgenteSistema extends Agent {
                         inform.setContent(tipoAccion.COMBATE.name() + "," + res_ret);
                         this.myAgent.send(inform);
                        
-                        if(res==tipoResultado.FRACASO.name()){ //Morir
+                        if(res.equals(tipoResultado.FRACASO.name())){ //Morir
                             System.out.println("Descanse en paz, agenge sistema " + this.myAgent.getLocalName());
                             myAgent.doDelete();
                         }
@@ -236,7 +240,7 @@ public class AgenteSistema extends Agent {
                         if(bonus>max_bonus) bonus=max_bonus;
                         
                         ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
-                        agree.setContent(tipoAccion.CONOCERORACULO.name());
+                        inform.setContent(tipoAccion.CONOCERORACULO.name());
                         inform.addReceiver(mensaje.getSender());
                         
                         this.myAgent.send(inform);
