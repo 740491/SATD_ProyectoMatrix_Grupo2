@@ -19,6 +19,11 @@ import java.util.Random;
  */
 public class AgenteJoePublic extends Agent {
     
+    //---------------------------------- CONSTANTES ----------------------------------
+    private final int MAX_TIMEOUTS = 3;
+    private final int TIMEOUT = 2000; //ms
+
+    
     public class JoePublic_behaviour extends CyclicBehaviour {
         /* Comportamiento Agente JoePublic
         * 
@@ -45,31 +50,98 @@ public class AgenteJoePublic extends Agent {
             
             
                 String content[] = mensaje.getContent().split(",");
-                Random rand = new Random();
-                float prob = rand.nextFloat();
-                System.out.println("Probabilidad de reclutar creada " + prob);
-                if(prob < 0.8){
-                    /*Mando respuesta de reclutar*/
-                    ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
-                    respuesta.addReceiver(mensaje.getSender());
-                    respuesta.setContent(MensajesComunes.tipoResultado.EXITO.name());
-                    System.out.println("Éxito al reclutar.");
-                    this.myAgent.send(respuesta);
-                    this.myAgent.doDelete();
-                }else{
-                    /*Mando respuesta de no reclutar*/
-                    ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
-                    respuesta.addReceiver(mensaje.getSender());
-                    respuesta.setContent(MensajesComunes.tipoResultado.FRACASO.name());
-                    System.out.println("Fracaso al reclutar.");
-                    this.myAgent.send(respuesta);
+                
+                if(content[0].equals(MensajesComunes.tipoAccion.CONOCERORACULO.name())){
+                    /*Oráculo*/
+                    ACLMessage bonus = new ACLMessage(ACLMessage.REQUEST);
                     if(content[1].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
-                        /*Se recibe el REQUEST del Agente Sistema*/
-                        System.out.println("El agente " + this.myAgent.getName() + " es de tipo " + content[0]);
+                        bonus.addReceiver(new AID("Smith", AID.ISLOCALNAME));
+                    }
+                    else{
+                        bonus.addReceiver(new AID("Neo", AID.ISLOCALNAME));
+                    }
+                    bonus.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name());
+                    System.out.println("Éxito al oraculear.");
+                    
+                    ACLMessage okey = new ACLMessage(ACLMessage.AGREE);
+                    okey.addReceiver(mensaje.getSender());
+                    this.myAgent.send(okey);
+                    //esperar agree de recopilador
+                    // while(not agree)
+                    boolean recopilador_agree = false;
+
+                    while(!recopilador_agree){
+                        ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
+
+                        // Si salta timeout -> respuesta = null
+                        // Reenviar la petición (y no cambiar recopilador_agree)
+                        if(respuesta == null){
+                            this.myAgent.send(bonus);
+                            System.out.println("SALTA TIMEOUT-ORACULO");
+                        }
+                        // Si la respuesta es un "agree" es lo que esperábamos
+                        // Salir del bucle (recopilador_agree = true)
+                        // Si no es un agree se ignora el mensaje
+                        else if(ACLMessage.AGREE == respuesta.getPerformative() ){
+                            recopilador_agree = true;
+                            //System.out.println("RECIBIDO-DM "  + this.myAgent.getLocalName());
+                        }
+
+                    }
+                    // esperar inform
+                    boolean recopilador_inform = false;
+                    while(!recopilador_inform){
+                        ACLMessage inform_respuesta = this.myAgent.blockingReceive(TIMEOUT);
+
+                        // Si salta timeout -> inform_respuesta = null
+                        // Reenviar la petición (y no cambiar recopilador_inform)
+                        if(inform_respuesta == null){
+                            this.myAgent.send(bonus);
+                        }
+
+                        // Si la respuesta es un "inform" es lo que esperábamos
+                        // Salir del bucle (recopilador_inform = true)
+                        // Si no es un inform se ignora el mensaje
+                        else if(ACLMessage.INFORM == inform_respuesta.getPerformative() ){
+                            recopilador_inform = true;
+                        }
+                    }
+                    
+                    ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
+                    inform.addReceiver(mensaje.getSender());
+                    inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name());
+                    System.out.println("Informar del oráculo");
+                    this.myAgent.send(inform);
+                    this.myAgent.doDelete();
+                }
+                else{
+                    Random rand = new Random();
+                    float prob = rand.nextFloat();
+                    System.out.println("Probabilidad de reclutar creada " + prob);
+                    if(prob < 0.8){
+                        /*Mando respuesta de reclutar*/
+                        ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
+                        respuesta.addReceiver(mensaje.getSender());
+                        respuesta.setContent(MensajesComunes.tipoResultado.EXITO.name());
+                        System.out.println("Éxito al reclutar.");
+                        this.myAgent.send(respuesta);
                         this.myAgent.doDelete();
-                        System.out.println("Eliminado el agente.");
+                    }else{
+                        /*Mando respuesta de no reclutar*/
+                        ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
+                        respuesta.addReceiver(mensaje.getSender());
+                        respuesta.setContent(MensajesComunes.tipoResultado.FRACASO.name());
+                        System.out.println("Fracaso al reclutar.");
+                        this.myAgent.send(respuesta);
+                        if(content[1].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
+                            /*Se recibe el REQUEST del Agente Sistema*/
+                            System.out.println("El agente " + this.myAgent.getName() + " es de tipo " + content[0]);
+                            this.myAgent.doDelete();
+                            System.out.println("Eliminado el agente.");
+                        }
                     }
                 }
+                
             }
         }
     }
