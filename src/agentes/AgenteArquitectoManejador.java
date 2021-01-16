@@ -501,7 +501,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             
             // Inform request
             ACLMessage inform = msg.createReply();
-            agree.setPerformative(ACLMessage.INFORM);
+            inform.setPerformative(ACLMessage.INFORM);
             this.myAgent.send(inform);
             
         }         
