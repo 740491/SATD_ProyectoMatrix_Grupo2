@@ -26,8 +26,8 @@ public class MensajesComunes {
     // TIPOAGENTE, nombre
     // PEDIRINFORMACION, informacion    (respuesta)
     
-    // Mensajes entre agentes: 
-        enum tipoAccion{
+    // Mensajes entre agentes / resultado a arquitecto: 
+    enum tipoAccion{
         COMBATE,
         RECLUTAMIENTO,
         CONOCERORACULO
@@ -36,7 +36,7 @@ public class MensajesComunes {
     // ATACAR, tipoAgente, bonus         ATACAR          ATACAR,tipoResultado
     
     // RECLUTAMIENTO,tipoAgente, bonus   RECLUTAMIENTO   RECLUTAMIENTO,tipoResultado
-    // CONOCERORACULO,tipoAgente         CONOCERORACULO  CONOCERORACULO
+    // CONOCERORACULO,tipoAgente         CONOCERORACULO  CONOCERORACULO, ORACULO
     
     // Se utiliza para indicar EMISOR
     enum tipoAgente{
