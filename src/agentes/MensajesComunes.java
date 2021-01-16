@@ -30,14 +30,13 @@ public class MensajesComunes {
         enum tipoAccion{
         COMBATE,
         RECLUTAMIENTO,
-        ORACULO
+        CONOCERORACULO
     }
     // REQUEST                           AGREE           INFORM
     // ATACAR, tipoAgente, bonus         ATACAR          ATACAR,tipoResultado
     
-    // RECLUTAR,tipoAgente, bonus        RECLUTAR        RECLUTAR,tipoResultado
+    // RECLUTAMIENTO,tipoAgente, bonus   RECLUTAMIENTO   RECLUTAMIENTO,tipoResultado
     // CONOCERORACULO,tipoAgente         CONOCERORACULO  CONOCERORACULO
-        // Mensajes entre agentes
     
     // Se utiliza para indicar EMISOR
     enum tipoAgente{
