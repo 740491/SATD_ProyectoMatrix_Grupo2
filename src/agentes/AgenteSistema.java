@@ -136,7 +136,11 @@ public class AgenteSistema extends Agent {
                 }
                 else{
                     timeouts--;
-                    if(timeouts == 0) System.out.println("SALTA TIMEOUT!!!!"); ocupado = false; // Se acabo el tiempo de espera
+                    if(timeouts == 0){
+                        System.out.println("SALTA TIMEOUT!!!!");
+                        ocupado = false;
+                        avisar_arquitecto(tipoMensaje.ESTOYLIBRE.name() + "," + tipoAgente.SISTEMA.name());
+                    }
                 }
             }
             else if(ACLMessage.AGREE == mensaje.getPerformative() ){

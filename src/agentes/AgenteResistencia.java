@@ -136,7 +136,11 @@ public class AgenteResistencia extends Agent {
                 }
                 else{
                     timeouts--;
-                    if(timeouts <= 0) System.out.println("SALTA TIMEOUT!!!!"); ocupado = false; // Se acabo el tiempo de espera
+                    if(timeouts <= 0){
+                        System.out.println("SALTA TIMEOUT!!!!");
+                        ocupado = false; // Se acabo el tiempo de espera
+                        avisar_arquitecto(tipoMensaje.ESTOYLIBRE.name() + "," + tipoAgente.RESISTENCIA.name());
+                    }
                 }
             }
             else if(ACLMessage.AGREE == mensaje.getPerformative() ){

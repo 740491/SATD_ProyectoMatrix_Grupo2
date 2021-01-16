@@ -21,6 +21,7 @@ public class MensajesComunes {
         PEDIRINFORMACION, //tipoAgente
         ATACAR, //tipoAgente, bonus
         RECLUTAR, //tipoAgente, bonus
+        ESTOYLIBRE //tipoAgente
     }
     /// Informs de arquitecto a agentes:
     // TIPOAGENTE, nombre
