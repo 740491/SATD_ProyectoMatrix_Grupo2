@@ -429,7 +429,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         agentesSistemaLibres.add(a);
                         //el agente resistencia queda libre
                         Agente aR = new Agente(content[4], tipoAgente.RESISTENCIA);
-                        agentesResistencia.remove(aR);
+                        agentesResistencia.add(aR);
                         
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.COMBATE, tipoResultado.EMPATE);
@@ -446,7 +446,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                     if(content[1].equals(tipoAgente.RESISTENCIA.name())){
                         //el agente resistencia queda libre
                         Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
-                        agentesResistenciaLibres.remove(aR);
+                        agentesResistenciaLibres.add(aR);
                         //He reclutado a otro de resistencia
                         aR = new Agente(content[4], tipoAgente.RESISTENCIA);
                         agentesResistencia.add(aR);
@@ -460,7 +460,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                     else if(content[1].equals(tipoAgente.SISTEMA.name())){
                         //el agente sistema queda libre
                         Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
-                        agentesSistemaLibres.remove(aS);
+                        agentesSistemaLibres.add(aS);
                         //He reclutado a otro de sistema
                         aS = new Agente(content[4], tipoAgente.SISTEMA);
                         agentesSistema.add(aS);
@@ -477,14 +477,14 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                     if(content[1].equals(tipoAgente.RESISTENCIA.name())){
                         //el agente resistencia queda libre
                         Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
-                        agentesResistenciaLibres.remove(aR);
+                        agentesResistenciaLibres.add(aR);
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO);
                     }
                     else if(content[1].equals(tipoAgente.SISTEMA.name())){
                         //el agente sistema queda libre
                         Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
-                        agentesSistemaLibres.remove(aS);
+                        agentesSistemaLibres.add(aS);
                         //al no reclutarlo mata al joepublic
                         Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
                         agentesJoePublic.remove(aJ);
@@ -511,7 +511,29 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             inform.setPerformative(ACLMessage.INFORM);
             this.myAgent.send(inform);
             
-        }         
+        }
+        else if(content[0].equals(tipoMensaje.ESTOYLIBRE.name())){
+            // Confirmar (agree)
+            ACLMessage agree = msg.createReply();
+            agree.setPerformative(ACLMessage.AGREE);
+            this.myAgent.send(agree);
+            if(content[1].equals(tipoAgente.RESISTENCIA.name())){
+                //el agente resistencia queda libre
+                Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
+                agentesResistenciaLibres.add(aR);
+            }
+            else if(content[1].equals(tipoAgente.SISTEMA.name())){
+                //el agente sistema queda libre
+                Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
+                agentesResistenciaLibres.add(aS);
+            
+            }
+            // Inform request
+            ACLMessage inform = msg.createReply();
+            inform.setPerformative(ACLMessage.INFORM);
+            this.myAgent.send(inform);
+            
+        }
              
     }
     
