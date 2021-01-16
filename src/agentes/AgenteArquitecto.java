@@ -56,21 +56,16 @@ public class AgenteArquitecto extends Agent {
     public class Agente{
         tipoAgente tipo;
         String nombre;
-        int bonus;
 
-        private Agente(String nombre, tipoAgente tipoAgente, int i) {
+        private Agente(String nombre, tipoAgente tipoAgente) {
             this.nombre = nombre;
             this.tipo = tipoAgente;
-            this.bonus = i;
         }
         public String getNombre(){
             return this.nombre;
         }
-        public tipoAgente getTipo(){
+        public tipoAgente getTipoAgente(){
             return this.tipo;
-        }
-        public int getBonus(){
-            return this.bonus;
         }
     }
     
