@@ -16,28 +16,26 @@ import jade.lang.acl.ACLMessage;
 
 import java.util.Random;
 
+import agentes.MensajesComunes.tipoResultado;
+import agentes.MensajesComunes.tipoAccion;
+import agentes.MensajesComunes.tipoAgente;
+import agentes.Decisor;
+import agentes.Decisor.Estrategias;
+
 
 public class AgenteResistencia extends Agent {
     //---------------------------------- CONSTANTES ----------------------------------
     private final int MAX_TIMEOUTS = 5;
     private final int TIMEOUT = 2000; //ms
-    private Estrategias estrategia = Estrategias.ALEATORIA; //Estrategia a utilizar
     
-    //Diferentes estrategias de toma de decisión a probar. Esta con un enum por si quieres ponerles nombre
-    public enum Estrategias{
-        ALEATORIA,
-        ESTRATEGIA1,
-        ESTRATEGIA2,
-        ESTRATEGIA3,
+            // Acciones que deciden hacer los AgentesSistema, y Resistencia
+    enum tipoAccion{
+        ATACAR,
+        RECLUTAR, //Incluye encontrar oráculo
+        PEDIRINFORMACION
     }
-    
-    public enum Decision{
-        COMBATIR, RECLUTAR, PEDIR_INFO
-    }
-    
-   
-    
     //---------------------------------- VARIABLES GLOBALES ----------------------------------
+    private Decisor decisor = new Decisor(Estrategias.ALEATORIA); // IMPORTANTE: Estrategia a utilizar
     private int bonus;
     private int max_bonus;
     private int timeouts;
@@ -45,77 +43,15 @@ public class AgenteResistencia extends Agent {
     private Random rand;
     AID arquitecto;
     String objetivo; //AID del agente a atacar o reclutar
-    
-    //---------------------------------- ESTRATEGIAS ----------------------------------
-    
-    public Decision estrategia_aleatoria(){
-        float prob = rand.nextFloat();
-        if(prob > 0.5){
-            return Decision.COMBATIR;
-        }else{
-            return Decision.RECLUTAR;
-        }
-    }
-    
-    // TODO
-    public Decision estrategia1(){
-        float prob = rand.nextFloat();
-        if(prob > 0.5){
-            return Decision.COMBATIR;
-        }else{
-            return Decision.RECLUTAR;
-        }
-    }
-    
-    // TODO
-    public Decision estrategia2(){
-        float prob = rand.nextFloat();
-        if(prob > 0.5){
-            return Decision.COMBATIR;
-        }else{
-            return Decision.RECLUTAR;
-        }
-    }
-    
-    // TODO
-    public Decision estrategia3(){
-        float prob = rand.nextFloat();
-        if(prob > 0.5){
-            return Decision.COMBATIR;
-        }else{
-            return Decision.RECLUTAR;
-        }
-    }
         
     
     //---------------------------------- FUNCIONES Y METODOS ----------------------------------
     public class Sistema_behaviour extends CyclicBehaviour {
-        
-        // Solicitar combate con otro agente
-        public Decision decidir_accion(){
-            Decision resultado;
-            switch(estrategia){
-                case ESTRATEGIA1:
-                    resultado = estrategia1();
-                    break;
-                case ESTRATEGIA2:
-                    resultado = estrategia2();
-                    break;
-                case ESTRATEGIA3:
-                    resultado = estrategia3();
-                    break;
-                default:
-                    resultado = estrategia_aleatoria();
-                    break;
-            }
-            return resultado;
-        }
-        
-        
-        public void morir(){
+
+        public void avisar_arquitecto(String contenido){ //TODO:
             boolean recopilador_agree = false;
             ACLMessage mensaje_muerte = new ACLMessage(ACLMessage.REQUEST);
-            mensaje_muerte.setContent("Muerte");
+            mensaje_muerte.setContent(contenido);
             mensaje_muerte.addReceiver(arquitecto);
             while(!recopilador_agree){
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
@@ -126,17 +62,17 @@ public class AgenteResistencia extends Agent {
         }
         
         //Trata una petición de combate, incluyendo el cálculo de probabiliades, y devuelve un string con el resultado
-        public String tratar_combate(float bonus_rival){
+        public tipoResultado tratar_combate(float bonus_rival){
             //float resultado = rand.nextFloat() * bonus/bonus_rival;
             float resultado = rand.nextFloat() * 1 + (bonus-bonus_rival)/10;      
             if(resultado > 0.55){ //Victoria
                 if(bonus < max_bonus) bonus++;
-                return "EXITO";
+                return tipoResultado.EXITO;
             }else if(resultado >= 0.45){ //Tablas
                 bonus--;
-                return "EMPATE";
+                return tipoResultado.EMPATE;
             }else{ //Derrota
-                return "FRACASO";
+                return tipoResultado.FRACASO;
             }
         }
         
@@ -148,25 +84,25 @@ public class AgenteResistencia extends Agent {
             //Si salta timeout
             if(mensaje == null){
                 if( !ocupado ){ //Estamos libres, a hacer algo
-                    Decision dec = decidir_accion();
+                    tipoAccion dec = decisor.decidir_accion();
                     ocupado = true;
-                    if(dec == Decision.COMBATIR){
+                    if(dec == tipoAccion.ATACAR){
                         ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
                         query.addReceiver(arquitecto);
-                        query.setContent("COMBATIR,AgenteResistencia," + Integer.toString(bonus));//TODO: AgenteSistema
+                        query.setContent("COMBATIR,RESISTENCIA," + Integer.toString(bonus));//TODO: AgenteSistema
                         this.myAgent.send(query);
 
                         timeouts = MAX_TIMEOUTS;
-                    }else if(dec == Decision.RECLUTAR){
+                    }else if(dec == tipoAccion.RECLUTAR){
                         ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
                         query.addReceiver(arquitecto);
-                        query.setContent("AgenteJoePublic");
+                        query.setContent("RECLUTAR,RESISTENCIA" + Integer.toString(bonus));
                         this.myAgent.send(query);
                     }
-                    else if(dec == Decision.PEDIR_INFO){
+                    else if(dec == tipoAccion.INFORMACION){
                         ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
                         query.addReceiver(arquitecto);
-                        query.setContent("Informacion");
+                        query.setContent("INFORMACION,RESISTENCIA" + Integer.toString(bonus));
                         this.myAgent.send(query);
                     }
                 }
@@ -179,26 +115,28 @@ public class AgenteResistencia extends Agent {
                 timeouts = MAX_TIMEOUTS * 2;
             }
             //Nos llega un agente, información, o mensaje de finalizar una acción
-            else if(ACLMessage.INFORM == mensaje.getPerformative() ){
+            else if(ACLMessage.INFORM_REF == mensaje.getPerformative() ){
                 timeouts = MAX_TIMEOUTS;
                 String content[] = mensaje.getContent().split(",");
-                if(content[0] == "AgenteSistema"){
+                if(content[0] == "RESISTENCIA"){
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent("Combatir," + String.valueOf(bonus));
                         this.myAgent.send(request);
-                }else if(content[0] == "AgenteJoePublic"){
+                }else if(content[0] == "JOEPUBLIC"){
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent("Reclutar-Resistencia" + String.valueOf(bonus));
                         this.myAgent.send(request);
-                }else if(content[0] == "AgenteOraculo"){
+                /*else if(content[0] == "ORACULO"){ // ------------------------- 
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent("ConocerOraculo");
-                        this.myAgent.send(request);
+                        this.myAgent.send(request);*/
                 }else if(content[0] == "Informacion"){
                     ocupado = false; 
+                    String info = null;
+                    decisor.actualizar_info(info);
                     //TODO: Actualizar info
                 }else if(content[0] == "ResultadoCombate"){
                     ocupado = false;
@@ -212,7 +150,7 @@ public class AgenteResistencia extends Agent {
                         bonus--;
                     }else{
                         query.setContent("EMPATE");
-                       morir();
+                        //morir();
                     }
                 }else if(content[0] == "Reclutar"){
                     ocupado = false; 
@@ -234,7 +172,7 @@ public class AgenteResistencia extends Agent {
                         agree.addReceiver(mensaje.getSender());
                         this.myAgent.send(agree);
 
-                        String res = tratar_combate(Integer.parseInt(content[1]));
+                        String res = tratar_combate(Integer.parseInt(content[1])).name();
 
                         //Informar
                         ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
@@ -243,7 +181,7 @@ public class AgenteResistencia extends Agent {
                         this.myAgent.send(inform);
                         if(res=="FRACASO"){ //Morir
                             //Informar a arquitecto
-                            morir();
+                            //morir();
                         }
                     }else if(content[0] == "ConocerOraculo" && (this.myAgent.getLocalName().contains("Neo") || this.myAgent.getLocalName().contains("Smith"))){
                         ACLMessage agree = new ACLMessage(ACLMessage.AGREE);

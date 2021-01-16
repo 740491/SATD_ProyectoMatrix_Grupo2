@@ -7,10 +7,12 @@ package agentes;
 
 import agentes.AgenteArquitecto.Agente;
 import agentes.AgenteArquitecto.tipoAgente;
+import agentes.MensajesComunes.tipoAccion;
+import agentes.MensajesComunes.tipoResultado;
+
 import jade.core.behaviours.CyclicBehaviour;
 import java.util.StringTokenizer;
 
-import agentes.AgenteSistema.Decision;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
