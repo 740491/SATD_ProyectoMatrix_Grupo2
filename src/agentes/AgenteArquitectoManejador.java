@@ -525,7 +525,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             else if(content[1].equals(tipoAgente.SISTEMA.name())){
                 //el agente sistema queda libre
                 Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
-                agentesResistenciaLibres.add(aS);
+                agentesSistemaLibres.add(aS);
             
             }
             // Inform request
