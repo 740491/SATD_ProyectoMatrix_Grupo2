@@ -9,7 +9,7 @@ import jade.lang.acl.ACLMessage;
 
 public class AgenteResultado extends GuiAgent {
 
-    private JfrmAgenteResultado vres;//interfaz
+    private JfrmAgenteResultado jfrm;//interfaz
     AgenteResultado ag = this;//variable que se almacena el mismo para ser accedido por la accion del agente
     
     @Override
@@ -34,9 +34,9 @@ public class AgenteResultado extends GuiAgent {
             ACLMessage agree = msg.createReply();
             agree.setPerformative(ACLMessage.AGREE);
             this.myAgent.send(agree);
-            vres.setVisible(true);//solo se muestra la interfaz cuando se ha recibo el mensaje
+            jfrm.setVisible(true);//solo se muestra la interfaz cuando se ha recibo el mensaje
             String mensaje = msg.getContent();//Obtenemos el resultado
-            vres.mostrarResultado(mensaje); //se llama la funcion mostrar resultado que se encuentra en el Jfrm
+            jfrm.mostrarResultado(mensaje); //se llama la funcion mostrar resultado que se encuentra en el Jfrm
             
             ACLMessage inform = msg.createReply();
             inform.setPerformative(ACLMessage.INFORM);
@@ -46,7 +46,7 @@ public class AgenteResultado extends GuiAgent {
 
     /*Asignacion de comportamientos*/
     protected void setup() {
-        vres = new JfrmAgenteResultado(ag);//se instancia la interfaz
+        jfrm = new JfrmAgenteResultado(ag);//se instancia la interfaz
         mostrarResultado cs = new mostrarResultado();
         this.addBehaviour(cs);
     }
