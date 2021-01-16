@@ -39,9 +39,9 @@ public class AgenteJoePublic extends Agent {
         * */
         @Override
         public void action(){
-        
+            System.out.println("Hola me llamo :" + this.myAgent.getName());
             ACLMessage mensaje = myAgent.blockingReceive();           
-            
+            System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
             if(ACLMessage.REQUEST == mensaje.getPerformative() ){
                 
                 ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
@@ -118,7 +118,7 @@ public class AgenteJoePublic extends Agent {
                     Random rand = new Random();
                     float prob = rand.nextFloat();
                     System.out.println("Probabilidad de reclutar creada " + prob);
-                    if(prob < 0.8){
+                    if(prob < Integer.parseInt(content[2])/100.0 ){
                         /*Mando respuesta de reclutar*/
                         ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
                         respuesta.addReceiver(mensaje.getSender());
@@ -151,7 +151,7 @@ public class AgenteJoePublic extends Agent {
         MessageTemplate performativa = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);// Asignar una Performativa de tipo REQUEST al objeto MessageTemplate
         MessageTemplate plantilla = MessageTemplate.and(protocolo,performativa); //Componer Plantilla con las anteriores
  
-        addBehaviour(new AgenteJoePublicManejador(this, plantilla));
+        this.addBehaviour(new JoePublic_behaviour());
     }
     
     protected void takeDown(){
