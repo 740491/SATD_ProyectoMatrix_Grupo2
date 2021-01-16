@@ -24,5 +24,12 @@ public class Evento {
         this.agentesJoePublic = agentesJoePublic;
         this.accion = accion;
         this.resultado = resultado;
-    }      
+    }
+
+    @Override
+    public String toString() {
+        return "Evento{" + "agentesResistencia= " + agentesResistencia.toString() + ", agentesSistema= " + agentesSistema.toString() + ", agentesJoePublic= " + agentesJoePublic.toString() + ", accion=" + accion + ", resultado=" + resultado + "};";
+    }
+    
+    
 }

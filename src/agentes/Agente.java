@@ -26,4 +26,9 @@ public class Agente {
     public tipoAgente getTipoAgente(){
         return this.tipo;
     }
+
+    @Override
+    public String toString() {
+        return "Agente{" + "nombre= " + nombre + '}';
+    }
 }

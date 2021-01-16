@@ -160,7 +160,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         if(agentesResistencia.isEmpty() || agentesSistema.isEmpty()){
             boolean recopilador_agree = false;
             ACLMessage mensaje_resultado = new ACLMessage(ACLMessage.REQUEST);
-            mensaje_resultado.setContent(contenido);
+            mensaje_resultado.setContent(log.toString());
             mensaje_resultado.addReceiver(resultado);
             while(!recopilador_agree){
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
