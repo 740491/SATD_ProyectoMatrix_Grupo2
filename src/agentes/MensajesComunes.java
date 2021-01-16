@@ -17,7 +17,7 @@ public class MensajesComunes {
     
     enum tipoMensaje{
         // Arquitecto - Agentes
-        RESULTADO, //tipoAgente, tipoAccion, tipoResultado
+        RESULTADO, //tipoAgente, tipoAccion, tipoResultado, nombreRival  (tipoAccion = ATACAR,RECLUTAR)
         PEDIRINFORMACION, //tipoAgente
         ATACAR, //tipoAgente, bonus
         RECLUTAR, //tipoAgente, bonus
@@ -27,6 +27,10 @@ public class MensajesComunes {
     /// Informs de arquitecto a agentes:
     // TIPOAGENTE, nombre
     // PEDIRINFORMACION, informacion    (respuesta)
+    
+    
+    // Mensajes entre agentes:
+    // ATACAR, bonus    -   
     
     // Se utiliza para indicar EMISOR
     enum tipoAgente{
@@ -43,18 +47,9 @@ public class MensajesComunes {
         ORACULO 
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-   
-    
-    
-    
+    enum tipoAccion{
+        ATACAR,
+        RECLUTAR
+    }
+  
 }

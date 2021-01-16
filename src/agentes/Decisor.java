@@ -7,7 +7,6 @@ package agentes;
 
 import java.util.Random;
 
-import agentes.MensajesComunes.tipoAccion;
 
 public class Decisor {
     public enum Estrategias{
@@ -15,6 +14,13 @@ public class Decisor {
         ESTRATEGIA1,
         ESTRATEGIA2,
         ESTRATEGIA3,
+    }
+    
+    // Acciones que deciden hacer los AgentesSistema, y Resistencia
+    enum tipoDecision{
+        COMBATE,
+        RECLUTAMIENTO, //Incluye encontrar oráculo
+        PEDIRINFORMACION
     }
     
     Estrategias estrategia;
@@ -30,8 +36,8 @@ public class Decisor {
     }
     
     // Solicitar combate con otro agente
-    public tipoAccion decidir_accion(){
-        tipoAccion resultado;
+    public tipoDecision decidir_accion(){
+        tipoDecision resultado;
         switch(estrategia){
             case ESTRATEGIA1:
                 resultado = estrategia1();
@@ -49,46 +55,46 @@ public class Decisor {
         return resultado;
     }
     
-    public tipoAccion estrategia_aleatoria(){
+    public tipoDecision estrategia_aleatoria(){
         Random rand = new Random();
         float prob = rand.nextFloat();
         if(prob > 0.5){
-            return tipoAccion.ATACAR;
+            return tipoDecision.COMBATE;
         }else{
-            return tipoAccion.RECLUTAR;
+            return tipoDecision.RECLUTAMIENTO;
         }
     }
     
     // TODO
-    public tipoAccion estrategia1(){
+    public tipoDecision estrategia1(){
         Random rand = new Random();
         float prob = rand.nextFloat();
         if(prob > 0.5){
-            return tipoAccion.ATACAR;
+            return tipoDecision.COMBATE;
         }else{
-            return tipoAccion.RECLUTAR;
+            return tipoDecision.RECLUTAMIENTO;
         }
     }
     
     // TODO
-    public tipoAccion estrategia2(){
+    public tipoDecision estrategia2(){
         Random rand = new Random();
         float prob = rand.nextFloat();
         if(prob > 0.5){
-            return tipoAccion.ATACAR;
+            return tipoDecision.COMBATE;
         }else{
-            return tipoAccion.RECLUTAR;
+            return tipoDecision.RECLUTAMIENTO;
         }
     }
     
     // TODO
-    public tipoAccion estrategia3(){
+    public tipoDecision estrategia3(){
         Random rand = new Random();
         float prob = rand.nextFloat();
         if(prob > 0.5){
-            return tipoAccion.ATACAR;
+            return tipoDecision.COMBATE;
         }else{
-            return tipoAccion.RECLUTAR;
+            return tipoDecision.RECLUTAMIENTO;
         }
     }
     
