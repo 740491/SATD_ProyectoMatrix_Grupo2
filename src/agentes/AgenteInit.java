@@ -1,5 +1,6 @@
 package agentes;
 
+import agentes.MensajesComunes.tipoAgente;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.wrapper.AgentController;
@@ -16,7 +17,7 @@ public class AgenteInit extends Agent {
     private static int NUM_EXEC= 1;
     private static String[] RESISTENCIA_INIT = {"Neo","Morfeo","Triniti"};
     private static String[] SISTEMA_INIT = {"Smith","Torrente","Terminator"};
-    private ArrayList<String> agentes_JP = new ArrayList<>();
+    private List<String> agentes_JP = new ArrayList();
     public class Iniciar_Agentes extends OneShotBehaviour{
         public void action(){
             ContainerController cc = getContainerController();
@@ -36,16 +37,17 @@ public class AgenteInit extends Agent {
                     ac.start();
                     agentes_JP.add("joepublic-"+ i);
                 }
-                    ac = cc.createNewAgent("oraculo", "agentes.Oraculo", null);
+                    ac = cc.createNewAgent(tipoAgente.ORACULO.name(), "agentes.AgenteJoePublic", null);
                     ac.start();
                     agentes_JP.add("oraculo");
+                    Object argumentos[]= new String[]{"arquitecto"};
                     for(String agente:RESISTENCIA_INIT) {
-                        ac = cc.createNewAgent(agente, "agentes.AgenteResistencia", null);
+                        ac = cc.createNewAgent(agente, "agentes.AgenteResistencia", argumentos);
                         ac.start();
                     }
                     ac = cc.createNewAgent("resultado", "agentes.AgenteResultado", null);
                     ac.start();
-                    Object argumentos[]= new String[]{"arquitecto"};
+                    
                     for(String agente:SISTEMA_INIT) {
                         ac = cc.createNewAgent(agente, "agentes.AgenteSistema", argumentos);
                         ac.start();

@@ -1,6 +1,7 @@
 
 package agentes;
 
+import agentes.MensajesComunes.*;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -35,72 +36,14 @@ public class AgenteArquitecto extends Agent {
     private static String[] RESISTENCIA_INIT = {"Neo","Morfeo","Triniti"};
     private static String[] SISTEMA_INIT = {"Smith","Torrente","Terminator"};
     
-    enum tipoAgente{
-        RESISTENCIA,
-        SISTEMA,
-        JOEPUBLIC
-    }
     
-    enum tipoAccion{
-        ATACAR,
-        RECLUTAR
-    }
     
-    enum tipoResultado{
-        EXITO,
-        EMPATE,
-        FRACASO,
-        ORACULO
-    }
     
-    public class Agente{
-        tipoAgente tipo;
-        String nombre;
-        int bonus;
+    
+    
 
-        private Agente(String nombre, tipoAgente tipoAgente, int i) {
-            this.nombre = nombre;
-            this.tipo = tipoAgente;
-            this.bonus = i;
-        }
-        public String getNombre(){
-            return this.nombre;
-        }
-        public tipoAgente getTipo(){
-            return this.tipo;
-        }
-        public int getBonus(){
-            return this.bonus;
-        }
-    }
-    
-    public class Evento{
-        int num_evento;
-        List<Agente> agentesResistencia;
-        List<Agente> agentesSistema;
-        List<Agente> agentesJoePublic;
-        tipoAccion accion;
-        tipoResultado resultado;
+    List<Evento> log;
         
-        private Evento(int num_evento, List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, tipoAccion accion, tipoResultado resultado){
-            this.num_evento = num_evento;
-            this.agentesResistencia = agentesResistencia;
-            this.agentesSistema = agentesSistema;
-            this.agentesJoePublic = agentesJoePublic;
-            this.accion = accion;
-            this.resultado = resultado;
-        }
-    }
-    
-    public class Log{
-        List<Evento> log;
-        int num_eventos;
-        
-        private Log(List<Evento> log, int num_eventos){
-            this.log = log;
-            this.num_eventos = num_eventos;
-        }
-    }
     
     /*
         ATRIBUTOS ARQUITECTO
@@ -108,7 +51,6 @@ public class AgenteArquitecto extends Agent {
     List<Agente> agentesResistencia;
     List<Agente> agentesSistema;
     List<Agente> agentesJoePublic;
-    Log log;
     
     /*public class Recopilar_behaviour extends CyclicBehaviour {        
 
@@ -130,17 +72,17 @@ public class AgenteArquitecto extends Agent {
         agentesJoePublic = new ArrayList();
         
         // Inicializar y dar valor al log
-        log = new Log(new ArrayList(), 0);
+        log = new ArrayList();
         
         // Dar valor a los agentes de La Resistencia
         for(String agente:RESISTENCIA_INIT) {
-            Agente r = new Agente((String)agente, tipoAgente.RESISTENCIA, 50);
+            Agente r = new Agente((String)agente, tipoAgente.RESISTENCIA);
             agentesResistencia.add(r);
         }
         
         // Dar valor a los agentes del Sistema
         for(String agente:SISTEMA_INIT) {
-            Agente s = new Agente((String)agente, tipoAgente.SISTEMA, 50);
+            Agente s = new Agente((String)agente, tipoAgente.SISTEMA);
             agentesResistencia.add(s);
         }
         
@@ -148,7 +90,7 @@ public class AgenteArquitecto extends Agent {
         Object[] args = getArguments();
         //nos pasan en argumentos el nombre de todos los agentes joe public
         for(Object s : args ){
-            Agente candidato = new Agente((String)s, tipoAgente.JOEPUBLIC, -1);
+            Agente candidato = new Agente((String)s, tipoAgente.JOEPUBLIC);
 
             agentesJoePublic.add(candidato);
         }
