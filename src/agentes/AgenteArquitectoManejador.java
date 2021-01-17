@@ -447,6 +447,9 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         //el agente resistencia queda libre
                         Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
                         agentesResistenciaLibres.add(aR);
+                        //elimino al agente JOE PUBLIC correspondiente
+                        aR = new Agente(content[4], tipoAgente.JOEPUBLIC);
+                        agentesJoePublic.remove(aR);
                         //He reclutado a otro de resistencia
                         aR = new Agente(content[4], tipoAgente.RESISTENCIA);
                         agentesResistencia.add(aR);
@@ -461,6 +464,9 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         //el agente sistema queda libre
                         Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
                         agentesSistemaLibres.add(aS);
+                        //elimino al agente JOE PUBLIC correspondiente
+                        aS = new Agente(content[4], tipoAgente.JOEPUBLIC);
+                        agentesJoePublic.remove(aS);
                         //He reclutado a otro de sistema
                         aS = new Agente(content[4], tipoAgente.SISTEMA);
                         agentesSistema.add(aS);
@@ -488,6 +494,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         //al no reclutarlo mata al joepublic
                         Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
                         agentesJoePublic.remove(aJ);
+                        agentesJoePublicLibres.remove(aJ);
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                     }
@@ -496,6 +503,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                     //se elimina oraculo de la lista de Joe Publics
                     Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
                     agentesJoePublic.remove(aJ);
+                    agentesJoePublicLibres.remove(aJ);
                     //registro el log
                     e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.ORACULO, msg.getSender().getLocalName(), content[4]);
                 }
