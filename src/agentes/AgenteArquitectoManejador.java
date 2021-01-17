@@ -543,7 +543,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             }
             //se mete el evento en el log (lista de eventos)
             System.out.println("-Evento: " + e);
-            log.add(e);
+            log.add(e.toString());
             
             
             // Inform request
