@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 public class AgenteSistema extends Agent {
     //---------------------------------- CONSTANTES ----------------------------------
     private final int MAX_TIMEOUTS = 3;
-    private final int TIMEOUT = 5000; //ms
+    private final int TIMEOUT = 2000; //ms
     
     //---------------------------------- VARIABLES GLOBALES ----------------------------------
     private Decisor decisor = new Decisor(Estrategias.ALEATORIA); // IMPORTANTE: Estrategia a utilizar
@@ -66,7 +66,6 @@ public class AgenteSistema extends Agent {
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
                 if(respuesta == null) System.out.println("AGENTE SISTEMA/RESISTENCIA SE QUEDA PILLADO Y NO SE QUE HACER");
                 else if(ACLMessage.INFORM == respuesta.getPerformative()){
-                    System.out.println("BIEN!! El arquitecto confirma");
                     recopilador_inform = true;
                 }
             }
@@ -236,7 +235,7 @@ public class AgenteSistema extends Agent {
                             System.out.println("Descanse en paz, agenge sistema " + this.myAgent.getLocalName());
                             myAgent.doDelete();
                         }
-                    }else if(content[0].equals(tipoAccion.CONOCERORACULO.name()) && (this.myAgent.getLocalName().contains("Neo") || this.myAgent.getLocalName().contains("Smith"))){
+                    }else if(content[0].equals(tipoAccion.CONOCERORACULO.name())){
                         ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
                         agree.setContent(tipoAccion.CONOCERORACULO.name());
                         agree.addReceiver(mensaje.getSender());

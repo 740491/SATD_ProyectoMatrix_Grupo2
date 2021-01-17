@@ -20,8 +20,8 @@ import java.util.Random;
 public class AgenteJoePublic extends Agent {
     
     //---------------------------------- CONSTANTES ----------------------------------
-    private final int MAX_TIMEOUTS = 3;
-    private final int TIMEOUT = 2000; //ms
+    private final int MAX_TIMEOUTS = 1;
+    private final int TIMEOUT = 10000; //ms
 
     
     public class JoePublic_behaviour extends CyclicBehaviour {
@@ -59,7 +59,6 @@ public class AgenteJoePublic extends Agent {
                         bonus.addReceiver(new AID("Neo", AID.ISLOCALNAME));
                     }
                     bonus.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name());
-                    System.out.println("Éxito al oraculear.");
                     
                     ACLMessage okey = new ACLMessage(ACLMessage.AGREE);
                     okey.addReceiver(mensaje.getSender());
@@ -67,34 +66,37 @@ public class AgenteJoePublic extends Agent {
                     //esperar agree de recopilador
                     // while(not agree)
                     boolean recopilador_agree = false;
-
-                    while(!recopilador_agree){
+                    
+                    int timeouts = MAX_TIMEOUTS;
+                    while(!recopilador_agree && timeouts >= 0){
                         ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
 
                         // Si salta timeout -> respuesta = null
                         // Reenviar la petición (y no cambiar recopilador_agree)
                         if(respuesta == null){
                             this.myAgent.send(bonus);
-                            System.out.println("SALTA TIMEOUT-ORACULO");
+                            timeouts--;
+                            System.out.println("SALTA TIMEOUT-ORACULO hacia- " + content[1]);
                         }
                         // Si la respuesta es un "agree" es lo que esperábamos
                         // Salir del bucle (recopilador_agree = true)
                         // Si no es un agree se ignora el mensaje
                         else if(ACLMessage.AGREE == respuesta.getPerformative() ){
                             recopilador_agree = true;
+                            timeouts = MAX_TIMEOUTS;
                             //System.out.println("RECIBIDO-DM "  + this.myAgent.getLocalName());
                         }
-
                     }
                     // esperar inform
                     boolean recopilador_inform = false;
-                    while(!recopilador_inform){
+                    while(!recopilador_inform && timeouts >= 0){
                         ACLMessage inform_respuesta = this.myAgent.blockingReceive(TIMEOUT);
 
                         // Si salta timeout -> inform_respuesta = null
                         // Reenviar la petición (y no cambiar recopilador_inform)
                         if(inform_respuesta == null){
                             this.myAgent.send(bonus);
+                            timeouts--;
                         }
 
                         // Si la respuesta es un "inform" es lo que esperábamos
@@ -102,12 +104,18 @@ public class AgenteJoePublic extends Agent {
                         // Si no es un inform se ignora el mensaje
                         else if(ACLMessage.INFORM == inform_respuesta.getPerformative() ){
                             recopilador_inform = true;
+                            timeouts = MAX_TIMEOUTS;
                         }
                     }
                     
                     ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
                     inform.addReceiver(mensaje.getSender());
-                    inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name() + "," + MensajesComunes.tipoResultado.ORACULO.name());
+                    if(timeouts == 0){
+                        inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name() + "," + MensajesComunes.tipoResultado.FRACASO.name());
+                    }else{
+                        inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name() + "," + MensajesComunes.tipoResultado.ORACULO.name());
+
+                    }
                     System.out.println("Informar del oráculo");
                     this.myAgent.send(inform);
                     this.myAgent.doDelete();

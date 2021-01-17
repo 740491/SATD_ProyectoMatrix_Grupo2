@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 public class AgenteResistencia extends Agent {
     //---------------------------------- CONSTANTES ----------------------------------
     private final int MAX_TIMEOUTS = 3;
-    private final int TIMEOUT = 1000; //ms
+    private final int TIMEOUT = 2000; //ms
     
     //---------------------------------- VARIABLES GLOBALES ----------------------------------
     private Decisor decisor = new Decisor(Estrategias.ALEATORIA); // IMPORTANTE: Estrategia a utilizar
@@ -238,7 +238,7 @@ public class AgenteResistencia extends Agent {
                             System.out.println("Descanse en paz, agenge resistencia " + this.myAgent.getLocalName());
                             myAgent.doDelete();
                         }
-                    }else if(content[0].equals(tipoAccion.CONOCERORACULO.name()) && (this.myAgent.getLocalName().contains("Neo") || this.myAgent.getLocalName().contains("Smith"))){
+                    }else if(content[0].equals(tipoAccion.CONOCERORACULO.name())){
                         ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
                         agree.setContent(tipoAccion.CONOCERORACULO.name());
                         agree.addReceiver(mensaje.getSender());

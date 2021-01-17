@@ -343,9 +343,8 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     
     // Como resultado del combate o como resultado del reclutamiento
     private void tratarRequest(ACLMessage msg) throws StaleProxyException{
-        System.out.println("REQUEST ARQUITECTO");
         String content[] = msg.getContent().split(",");
-        System.out.println("De: " + content[0]);
+        System.out.println("REQUEST ARQUITECTO " + "De: " + content[0] + " emisor: " + msg.getSender().getLocalName());
         
         if (content[0].equals(tipoMensaje.RESULTADO.name())) {
             // Confirmar (agree)
