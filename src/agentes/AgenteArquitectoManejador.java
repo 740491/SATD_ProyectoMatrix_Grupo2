@@ -483,9 +483,12 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         //el agente resistencia queda libre
                         Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
                         agentesResistenciaLibres.add(aR);
-                        // agente Joe Public queda libre
-                        Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
-                        agentesJoePublicLibres.add(aJ);
+                        if(!content[4].equals(tipoAgente.ORACULO.name())){
+                            // agente Joe Public queda libre y no es el oraculo el mensaje fallido
+                            Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
+                            agentesJoePublicLibres.add(aJ);
+                        }
+                        
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                     }
@@ -493,13 +496,17 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         //el agente sistema queda libre
                         Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
                         agentesSistemaLibres.add(aS);
-                        //al no reclutarlo mata al joepublic
-                        Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
-                        agentesJoePublic.remove(aJ);
-                        agentesJoePublicLibres.remove(aJ);
+                        if(!content[4].equals(tipoAgente.ORACULO.name())){
+                            //al no reclutarlo mata al joepublic
+                            Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
+                            agentesJoePublic.remove(aJ);
+                            agentesJoePublicLibres.remove(aJ);
+                        }
+                        
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                     }
+                    
                 }
                 else if(content[3].equals(tipoResultado.ORACULO.name())){
                     //se elimina oraculo de la lista de Joe Publics
