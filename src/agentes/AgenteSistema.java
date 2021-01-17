@@ -164,10 +164,10 @@ public class AgenteSistema extends Agent {
                         request.setContent(tipoAccion.RECLUTAMIENTO.name() + "," + tipoAgente.SISTEMA  + "," + String.valueOf(bonus));
                         this.myAgent.send(request);
                 }else if(content[0].equals(tipoAgente.ORACULO.name())){ // ------------------------- 
-                        ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-                        request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                        request.setContent(tipoAccion.CONOCERORACULO.name() + "," + tipoAgente.SISTEMA);
-                        this.myAgent.send(request);
+                            ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+                            request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
+                            request.setContent(tipoAccion.CONOCERORACULO.name() + "," + tipoAgente.SISTEMA);
+                            this.myAgent.send(request); 
                 }
                 else if(content[0].equals(tipoMensaje.PEDIRINFORMACION.name())){ //TODO: Actualizar cuando se haga el decisor
                     ocupado = false; 
@@ -199,6 +199,10 @@ public class AgenteSistema extends Agent {
                 }else if(content[0].equals(tipoAccion.RECLUTAMIENTO.name())){
                     System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl RECLUTAMIENTO: "  + mensaje.getContent());
                 }else if(content[0].equals(tipoAccion.CONOCERORACULO.name())){
+                        if(this.myAgent.getName().equals("Smith") ){ // Oraculo no necesita reenviar, ya nos ha conocido
+                            bonus+=5;
+                            if(bonus>max_bonus) bonus=max_bonus;
+                        }
                     System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl CONOCERORACULO: "  + mensaje.getContent());
                 }else {
                     System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM inesperado: " + content[0]);
