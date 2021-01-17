@@ -55,7 +55,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     
     List<Evento> log;
     
-    AID resultado =  = new AID("resultado", AID.ISLOCALNAME);;
+    AID resultado = new AID("resultado", AID.ISLOCALNAME);
    
 
     AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, List<Evento> log, ContainerController cc) {
