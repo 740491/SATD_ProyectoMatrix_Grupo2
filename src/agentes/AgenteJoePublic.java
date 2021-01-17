@@ -109,7 +109,7 @@ public class AgenteJoePublic extends Agent {
                     
                     ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
                     inform.addReceiver(mensaje.getSender());
-                    inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name());
+                    inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name() + MensajesComunes.tipoResultado.ORACULO.name());
                     System.out.println("Informar del oráculo");
                     this.myAgent.send(inform);
                     this.myAgent.doDelete();
@@ -118,11 +118,12 @@ public class AgenteJoePublic extends Agent {
                     Random rand = new Random();
                     float prob = rand.nextFloat();
                     System.out.println("Probabilidad de reclutar creada " + prob);
-                    if(prob < Integer.parseInt(content[2])/100.0 ){
+                    System.out.println("EL CONTENT" + mensaje.getContent());
+                    if(prob*100 < Integer.parseInt(content[2]) ){
                         /*Mando respuesta de reclutar*/
                         ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
                         respuesta.addReceiver(mensaje.getSender());
-                        respuesta.setContent(MensajesComunes.tipoResultado.EXITO.name());
+                        respuesta.setContent(MensajesComunes.tipoAccion.RECLUTAMIENTO.name() + "," + MensajesComunes.tipoResultado.EXITO.name());
                         System.out.println("Éxito al reclutar.");
                         this.myAgent.send(respuesta);
                         this.myAgent.doDelete();
@@ -130,7 +131,7 @@ public class AgenteJoePublic extends Agent {
                         /*Mando respuesta de no reclutar*/
                         ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
                         respuesta.addReceiver(mensaje.getSender());
-                        respuesta.setContent(MensajesComunes.tipoResultado.FRACASO.name());
+                        respuesta.setContent(MensajesComunes.tipoAccion.RECLUTAMIENTO.name() + "," + MensajesComunes.tipoResultado.FRACASO.name());
                         System.out.println("Fracaso al reclutar.");
                         this.myAgent.send(respuesta);
                         if(content[1].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
@@ -157,5 +158,4 @@ public class AgenteJoePublic extends Agent {
     protected void takeDown(){
         System.out.println("El agente " + getLocalName() + " muere");
     }    
-    
 }

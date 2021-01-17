@@ -163,7 +163,7 @@ public class AgenteSistema extends Agent {
                         System.out.println("EEEEE - Soy: " + this.myAgent.getName() + " e intento reclutar a : "  + content[1]);
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
-                        request.setContent(tipoAccion.RECLUTAMIENTO.name() + "," + tipoAgente.SISTEMA   + String.valueOf(bonus));
+                        request.setContent(tipoAccion.RECLUTAMIENTO.name() + "," + tipoAgente.SISTEMA  + "," + String.valueOf(bonus));
                         this.myAgent.send(request);
                 }else if(content[0].equals(tipoAgente.ORACULO.name())){ // ------------------------- 
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
