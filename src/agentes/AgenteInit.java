@@ -39,7 +39,7 @@ public class AgenteInit extends Agent {
                 }
                     ac = cc.createNewAgent(tipoAgente.ORACULO.name(), "agentes.AgenteJoePublic", null);
                     ac.start();
-                    agentes_JP.add("oraculo");
+                    agentes_JP.add(tipoAgente.ORACULO.name());
                     Object argumentos[]= new String[]{"arquitecto"};
                     for(String agente:RESISTENCIA_INIT) {
                         ac = cc.createNewAgent(agente, "agentes.AgenteResistencia", argumentos);
