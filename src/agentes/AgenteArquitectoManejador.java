@@ -495,15 +495,19 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         //el agente sistema queda libre
                         Agente aS = new Agente(msg.getSender().getLocalName(), tipoAgente.SISTEMA);
                         agentesSistemaLibres.add(aS);
+                        
+                        //al no reclutarlo mata al joepublic
+                        Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
+                        agentesJoePublic.remove(aJ);
+                        agentesJoePublicLibres.remove(aJ);
                         if(!content[4].equals(tipoAgente.ORACULO.name())){
-                            //al no reclutarlo mata al joepublic
-                            Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
-                            agentesJoePublic.remove(aJ);
-                            agentesJoePublicLibres.remove(aJ);
+                            e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
+                        }else{
+                            //
+                            e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.CONOCERORACULO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                         }
                         
                         //registro el log
-                        e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                     }
                     
                 }
@@ -513,7 +517,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                     agentesJoePublic.remove(aJ);
                     agentesJoePublicLibres.remove(aJ);
                     //registro el log
-                    e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.ORACULO, msg.getSender().getLocalName(), content[4]);
+                    e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.CONOCERORACULO, tipoResultado.ORACULO, msg.getSender().getLocalName(), content[4]);
                 }
 
             }

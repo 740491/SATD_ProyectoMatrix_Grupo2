@@ -203,6 +203,10 @@ public class AgenteResistencia extends Agent {
                     System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl RECLUTAMIENTO: "  + mensaje.getContent());
                 }else if(content[0].equals(tipoAccion.CONOCERORACULO.name())){
                     System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl CONOCERORACULO: "  + mensaje.getContent());
+                    if(this.myAgent.getName().equals("Neo") ){ // Oraculo no necesita reenviar, ya nos ha conocido
+                        bonus+=5;
+                        if(bonus>max_bonus) bonus=max_bonus;
+                     }
                 }else {
                     System.err.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM inesperado: " + content[0]);
                 }
