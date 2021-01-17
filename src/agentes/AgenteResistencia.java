@@ -261,6 +261,9 @@ public class AgenteResistencia extends Agent {
                         ACLMessage respuesta = new ACLMessage(ACLMessage.REFUSE);
                         respuesta.setContent("DESOCUPATE");
                         respuesta.addReceiver(mensaje.getSender());
+                        //faltaba esto
+                        this.myAgent.send(respuesta);
+
                 }
             }
         }

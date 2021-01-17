@@ -64,7 +64,7 @@ public class AgenteSistema extends Agent {
             }
             while(!recopilador_inform){
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
-                if(respuesta == null) System.out.println("AGENTE SISTEMA/RESISTENCIA SE QUEDA PILLADO Y NO SE QUE HACER");
+                if(respuesta == null) System.out.println("AGENTE SISTEMA: " + this.myAgent.getLocalName() + "esperando inform del arquitecto");
                 else if(ACLMessage.INFORM == respuesta.getPerformative()){
                     recopilador_inform = true;
                 }
@@ -138,7 +138,7 @@ public class AgenteSistema extends Agent {
                 else{
                     timeouts--;
                     if(timeouts == 0){
-                        System.out.println("SALTA TIMEOUT!!!!");
+                        System.out.println("SALTA TIMEOUT!!!! al agente: " + this.myAgent.getLocalName());
                         ocupado = false;
                         avisar_arquitecto(tipoMensaje.ESTOYLIBRE.name() + "," + tipoAgente.SISTEMA.name());
                     }
@@ -174,7 +174,7 @@ public class AgenteSistema extends Agent {
                     String info = content[1];
                     decisor.actualizar_info(info);
                 }else{
-                    System.err.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM_REF inesperado: " + mensaje.getContent());
+                    System.err.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM_REF inesperado: " + mensaje.getContent() + "por parte de: " + mensaje.getSender().getLocalName());
                 }
             }//mensaje de finalizar una acción
             else if(ACLMessage.INFORM == mensaje.getPerformative() ){
@@ -251,7 +251,7 @@ public class AgenteSistema extends Agent {
                         this.myAgent.send(inform);
                         
                     }else {
-                        System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe REQUEST inesperado: " + content[0]);
+                        System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe REQUEST inesperado: " + content[0] + "por parte de: " + mensaje.getSender().getLocalName());
                     }
                 }else{//Si no -> Rechazar
                         System.out.println("EL AGENTE: " + this.myAgent.getLocalName() + " ESTA OCUPADO!");
@@ -259,6 +259,7 @@ public class AgenteSistema extends Agent {
                         ACLMessage respuesta = new ACLMessage(ACLMessage.REFUSE);
                         respuesta.setContent("DESOCUPATE");
                         respuesta.addReceiver(mensaje.getSender());
+                        this.myAgent.send(respuesta);
                 }
             }
         }
@@ -268,7 +269,6 @@ public class AgenteSistema extends Agent {
     protected void setup() {
         System.out.println("Agente Sistema "+ getLocalName()+" creado");
         Object[] args = getArguments();
-        System.out.println("Argumento: " + args[0]);
         bonus = 50;
         ocupado = false;
         rand = new Random();

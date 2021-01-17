@@ -197,9 +197,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             case ACLMessage.QUERY_REF:
                 tratarQueryRef(mensaje);
                 break;
-            case ACLMessage.REQUEST:
-                System.out.println("F");
-        
+            case ACLMessage.REQUEST:        
                 try {
                     tratarRequest(mensaje);
                 } catch (StaleProxyException ex) {
@@ -221,6 +219,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         comprobarFinal();
         
         System.out.println("AL FINAL");
+        System.out.println("Agentes libre: ");
         System.out.println(agentesResistenciaLibres);
         System.out.println(agentesSistemaLibres);
         System.out.println(agentesJoePublicLibres);
@@ -344,7 +343,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     // Como resultado del combate o como resultado del reclutamiento
     private void tratarRequest(ACLMessage msg) throws StaleProxyException{
         String content[] = msg.getContent().split(",");
-        System.out.println("REQUEST ARQUITECTO " + "De: " + content[0] + " emisor: " + msg.getSender().getLocalName());
+        System.out.println("REQUEST al ARQUITECTO " + "De: " + content[0] + " emisor: " + msg.getSender().getLocalName());
         
         if (content[0].equals(tipoMensaje.RESULTADO.name())) {
             // Confirmar (agree)
