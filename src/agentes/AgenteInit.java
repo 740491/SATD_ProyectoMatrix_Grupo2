@@ -14,7 +14,7 @@ import java.util.List;
 import static java.lang.System.exit;
 
 public class AgenteInit extends Agent {
-    private static int NUM_EXEC= 5;
+    private static int NUM_EXEC= 10;
     private static String[] RESISTENCIA_INIT = {"Neo","Morfeo","Triniti"};
     private static String[] SISTEMA_INIT = {"Smith","Torrente","Terminator"};
     private List<String> agentes_JP = new ArrayList();

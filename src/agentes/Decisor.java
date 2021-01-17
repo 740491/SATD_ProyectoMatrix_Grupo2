@@ -26,7 +26,8 @@ public class Decisor {
     }
     
     Estrategias estrategia;
-    // Aqui las variables que hagan falta para almacenar la informacion
+    // Aqui las variables que hagan falta para almacenar la informacion:
+    boolean hay_joepublic;
     
     public Decisor(Estrategias estrategia){
         this.estrategia = estrategia;
