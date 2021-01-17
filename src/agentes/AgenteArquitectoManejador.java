@@ -236,6 +236,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             boolean recopilador_agree = false;
 			
             ACLMessage mensaje_resultado = new ACLMessage(ACLMessage.REQUEST);
+            System.out.println(log);
             mensaje_resultado.setContent(log.toString());
             mensaje_resultado.addReceiver(resultado);
 			this.myAgent.send(mensaje_resultado);
@@ -283,12 +284,26 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             
             // Seleccionar estado del sistema -> String a parsear, clase... DECIDIR
             // TODO
-            //estado = ...
+            
+            // FORMATO DEL ESTADO:
+            // PEDIRINFORMACION,numSize(JoePublic),numSize(resistencia)
+            String estado = "";
+            estado += agentesJoePublic.size()+",";
+            estado += agentesResistencia.size()+",";
+            estado += agentesSistema.size()+",";
+            
+            Agente oraculo = new Agente(tipoAgente.ORACULO.name(), tipoAgente.JOEPUBLIC);
+            if(agentesJoePublic.contains(oraculo)){
+                estado += "QUEDAORACULO";
+            }else{
+                estado += "NOQUEDAORACULO";
+            }
             
             // Enviar respuesta (inform)
             ACLMessage inform = msg.createReply();
             inform.setPerformative(ACLMessage.INFORM_REF);
-            //inform.setContentObject(estado);
+            
+            inform.setContent(estado);
             this.myAgent.send(inform);
         }
         // COMBATIR

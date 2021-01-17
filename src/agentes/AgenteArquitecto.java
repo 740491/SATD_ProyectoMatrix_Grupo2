@@ -36,12 +36,6 @@ public class AgenteArquitecto extends Agent {
     
     private static String[] RESISTENCIA_INIT = {"Neo","Morfeo","Triniti"};
     private static String[] SISTEMA_INIT = {"Smith","Torrente","Terminator"};
-    
-    
-    
-    
-    
-    
 
     List<Evento> log;
         
