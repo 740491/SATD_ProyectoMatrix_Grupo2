@@ -53,12 +53,12 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     List<Agente> agentesSistemaLibres;
     List<Agente> agentesJoePublicLibres;
     
-    List<Evento> log;
+    List<String> log;
     
     AID resultado = new AID("resultado", AID.ISLOCALNAME);
    
 
-    AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, List<Evento> log, ContainerController cc) {
+    AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, List<String> log, ContainerController cc) {
         this.agentesResistencia = agentesResistencia;
         this.agentesSistema = agentesSistema;
         this.agentesJoePublic = agentesJoePublic;
@@ -136,8 +136,6 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     @Override
     public void action() {
         
-        
-        
         //Leer mensaje (con block corto para hacer de espera entre acciones)
         ACLMessage mensaje = myAgent.blockingReceive();
         
@@ -203,7 +201,6 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                 } catch (StaleProxyException ex) {
                     Logger.getLogger(AgenteArquitectoManejador.class.getName()).log(Level.SEVERE, null, ex);
                 }
-        
                 break;
             case ACLMessage.AGREE:
                 break;

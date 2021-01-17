@@ -33,7 +33,7 @@ public class Evento {
 
     @Override
     public String toString() {
-        return "Evento{" + " Acción:"+ accion + " | AgOrigen:"+ agenteQueEnvia + " | AgDestino:" + agenteConQuienInteracciona + " | Resultado:" + resultado+" <> AgResistencia:" + agentesResistencia + " || AgSistema:" + agentesSistema + " || AgJoePublic:" + agentesJoePublic + '}';
+        return "Evento{" + " Acción:"+ accion + " | AgOrigen:"+ agenteQueEnvia + " | AgDestino:" + agenteConQuienInteracciona + " | Resultado:" + resultado+" % AgResistencia:" + agentesResistencia.toString() + " | AgSistema:" + agentesSistema.toString() + " | AgJoePublic:" + agentesJoePublic.toString() + ";";
     }
 
     
