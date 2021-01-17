@@ -70,8 +70,18 @@ public class Decisor {
             System.out.println("ESTRATEGIA: " + Estrategias.RECLUTAR.name());
         }
         else{
-            this.estrategia = Estrategias.DESCENDENTE;
-            System.out.println("ESTRATEGIA: " + Estrategias.DESCENDENTE.name());
+            //this.estrategia = Estrategias.DESCENDENTE;
+            //System.out.println("ESTRATEGIA: " + Estrategias.DESCENDENTE.name());
+            //compruebo si quedan agente joepublic, en ese caso estrategia aleatoria
+            if(tamJoePublic > 0){
+                this.estrategia = Estrategias.ALEATORIA;
+                System.out.println("ESTRATEGIA: " + Estrategias.ALEATORIA.name());
+            }
+            //sino simplemente me dedico a atacar
+            else{
+                this.estrategia = Estrategias.ATACAR;
+                System.out.println("ESTRATEGIA: " + Estrategias.ATACAR.name());
+            }
         }
     }
     
