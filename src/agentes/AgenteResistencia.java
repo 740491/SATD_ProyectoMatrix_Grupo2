@@ -41,6 +41,7 @@ public class AgenteResistencia extends Agent {
     private Random rand;
     AID arquitecto;
     String objetivo; //AID del agente a atacar o reclutar
+    boolean tengoInfo;
         
     
     //---------------------------------- FUNCIONES Y METODOS ----------------------------------
@@ -114,26 +115,63 @@ public class AgenteResistencia extends Agent {
             //Si salta timeout
             if(mensaje == null){
                 if( !ocupado ){ //Estamos libres, a hacer algo
-                    tipoDecision dec = decisor.decidir_accion();
-                    ocupado = true;
-                    if(dec == tipoDecision.COMBATE){
-                        ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
-                        query.addReceiver(arquitecto);
-                        query.setContent(tipoMensaje.ATACAR.name() + "," + tipoAgente.RESISTENCIA.name() + "," + Integer.toString(bonus));
-                        this.myAgent.send(query);
+                    if(tengoInfo){
+                        tipoDecision dec = decisor.decidir_accion();
+                        ocupado = true;
+                        if(dec == tipoDecision.COMBATE){
+                            ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
+                            query.addReceiver(arquitecto);
+                            query.setContent(tipoMensaje.ATACAR.name() + "," + tipoAgente.RESISTENCIA.name() + "," + Integer.toString(bonus));
+                            this.myAgent.send(query);
 
-                        timeouts = MAX_TIMEOUTS;
-                    }else if(dec == tipoDecision.RECLUTAMIENTO){
-                        ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
-                        query.addReceiver(arquitecto);
-                        query.setContent(tipoMensaje.RECLUTAR.name() + "," + tipoAgente.RESISTENCIA.name() + "," + Integer.toString(bonus));
-                        this.myAgent.send(query);
+                            timeouts = MAX_TIMEOUTS;
+                        }else if(dec == tipoDecision.RECLUTAMIENTO){
+                            ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
+                            query.addReceiver(arquitecto);
+                            query.setContent(tipoMensaje.RECLUTAR.name() + "," + tipoAgente.RESISTENCIA.name() + "," + Integer.toString(bonus));
+                            this.myAgent.send(query);
+                        }
+                        else if(dec == tipoDecision.PEDIRINFORMACION){
+                            ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
+                            query.addReceiver(arquitecto);
+                            query.setContent(tipoMensaje.PEDIRINFORMACION.name());
+                            this.myAgent.send(query);
+                        }
+                        tengoInfo=false;
                     }
-                    else if(dec == tipoDecision.PEDIRINFORMACION){
+                    else{
+                        // PEDIR INFORMACIÓN
                         ACLMessage query = new ACLMessage(ACLMessage.QUERY_REF);
                         query.addReceiver(arquitecto);
                         query.setContent(tipoMensaje.PEDIRINFORMACION.name());
                         this.myAgent.send(query);
+                        
+                        
+                        boolean recopilador_agree = false;
+                        boolean recopilador_inform = false;
+                        // ESPERAR AGREE
+                        while(!recopilador_agree){
+                            ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
+                            if(respuesta == null) this.myAgent.send(query);
+                            else if(ACLMessage.AGREE == respuesta.getPerformative()){
+                                recopilador_agree = true;
+                            }
+                        }
+                        
+                        String info = "";
+                        // ESPERAR INFORM
+                        while(!recopilador_inform){
+                            ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
+                            if(respuesta == null) System.out.println("AGENTE SISTEMA: " + this.myAgent.getLocalName() + "esperando inform del arquitecto");
+                            else if(ACLMessage.INFORM_REF == respuesta.getPerformative()){
+                                recopilador_inform = true;
+                                info = respuesta.getContent();
+                            }
+                        }
+                        
+                        // Modificar estrategia en función del inform
+                        decisor.actualizar_info(info);
+                        tengoInfo=true;
                     }
                 }
                 else{
@@ -287,5 +325,6 @@ public class AgenteResistencia extends Agent {
         }else{
             max_bonus = 90;
         }
+        tengoInfo = false;
     }
 }

@@ -285,6 +285,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
             // FORMATO DEL ESTADO:
             // PEDIRINFORMACION,agentesJoePublic.size(),agentesResistencia.size(),agentesSistema.size(),(NO)QUEDAORACULO
             String estado = "";
+            estado += MensajesComunes.tipoMensaje.PEDIRINFORMACION.name()+",";
             estado += agentesJoePublic.size()+",";
             estado += agentesResistencia.size()+",";
             estado += agentesSistema.size()+",";

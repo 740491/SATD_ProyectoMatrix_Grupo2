@@ -18,6 +18,7 @@ public class Decisor {
         ESTRATEGIA2,
         ESTRATEGIA3,
         ATACAR,
+        RECLUTAR,
         DESCENDENTE
     }
     
@@ -39,6 +40,39 @@ public class Decisor {
     //Parsea y almacena la nueva información
     public void actualizar_info(String info){
         
+        if(!info.equals("")){
+            String content[] = info.split(",");
+            
+            try{
+                if(content[0].equals(MensajesComunes.tipoMensaje.PEDIRINFORMACION.name())){
+                    // PEDIRINFORMACION,agentesJoePublic.size(),agentesResistencia.size(),agentesSistema.size(),(NO)QUEDAORACULO
+                    elegirEstrategiaCompleja(Integer.parseInt(content[1]), Integer.parseInt(content[2]), Integer.parseInt(content[3]), content[4]);
+                }
+                else{
+                    // YA TRATADO
+                }
+            }
+            catch(Exception e){
+                System.out.println("SPLIT EN LA INFO DEL ESTADO INCORRECTO" + e);
+            }
+        }
+        else{
+            System.out.println("LA INFO DEL ESTADO NO ESTÁ BIEN");
+        }
+    }
+    
+    // ELEGIR ESTRATEGIA A PARTIR DEL ESTADO
+    // PEDIRINFORMACION,agentesJoePublic.size(),agentesResistencia.size(),agentesSistema.size(),(NO)QUEDAORACULO
+    public void elegirEstrategiaCompleja(int tamJoePublic, int tamResistencia, int tamSistema, String hayOraculo){
+        System.out.println("ELIGIENDO ESTRATEGIA:");
+        if(hayOraculo.equals("QUEDAORACULO")){
+            this.estrategia = Estrategias.RECLUTAR;
+            System.out.println("ESTRATEGIA: " + Estrategias.RECLUTAR.name());
+        }
+        else{
+            this.estrategia = Estrategias.DESCENDENTE;
+            System.out.println("ESTRATEGIA: " + Estrategias.DESCENDENTE.name());
+        }
     }
     
     // Solicitar combate con otro agente
@@ -56,6 +90,9 @@ public class Decisor {
                 break;
             case ATACAR:
                 resultado = atacar();
+                break;
+            case RECLUTAR:
+                resultado = reclutar();
                 break;
             case DESCENDENTE:
                 resultado = descendente();
@@ -113,6 +150,11 @@ public class Decisor {
     // SE DECIDE ATACAR SIEMPRE
     public tipoDecision atacar(){
         return tipoDecision.COMBATE;
+    }
+    
+    // SE DECIDE RECLUTAR SIEMPRE
+    public tipoDecision reclutar(){
+        return tipoDecision.RECLUTAMIENTO;
     }
     
     // SE DECIDE ATACAR SIEMPRE
