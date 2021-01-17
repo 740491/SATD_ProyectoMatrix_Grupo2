@@ -9,13 +9,16 @@ import java.util.Random;
 
 
 public class Decisor {
+    
+    int probReclutar = 90;
 
     public enum Estrategias{
         ALEATORIA,
         ESTRATEGIA1,
         ESTRATEGIA2,
         ESTRATEGIA3,
-        ATACAR
+        ATACAR,
+        DESCENDENTE
     }
     
     // Acciones que deciden hacer los AgentesSistema, y Resistencia
@@ -53,6 +56,9 @@ public class Decisor {
                 break;
             case ATACAR:
                 resultado = atacar();
+                break;
+            case DESCENDENTE:
+                resultado = descendente();
                 break;
             default:
                 resultado = estrategia_aleatoria();
@@ -107,6 +113,20 @@ public class Decisor {
     // SE DECIDE ATACAR SIEMPRE
     public tipoDecision atacar(){
         return tipoDecision.COMBATE;
+    }
+    
+    // SE DECIDE ATACAR SIEMPRE
+    public tipoDecision descendente(){
+        this.probReclutar -= 5;
+        
+        Random rand = new Random();
+        float prob = rand.nextFloat();
+        
+        if(prob*100 > probReclutar){
+            return tipoDecision.COMBATE;
+        }else{
+            return tipoDecision.RECLUTAMIENTO;
+        }
     }
     
 }

@@ -68,10 +68,9 @@ public class AgenteJoePublic extends Agent {
                             bonus.addReceiver(new AID("Neo", AID.ISLOCALNAME));
                         }
                         bonus.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name());
+                        this.myAgent.send(bonus);
 
-                        ACLMessage okey = new ACLMessage(ACLMessage.AGREE);
-                        okey.addReceiver(mensaje.getSender());
-                        this.myAgent.send(okey);
+                        
                         //esperar agree de recopilador
                         // while(not agree)
                         boolean recopilador_agree = false;

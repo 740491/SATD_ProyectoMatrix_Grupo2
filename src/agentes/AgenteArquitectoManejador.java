@@ -490,6 +490,11 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                             Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
                             agentesJoePublicLibres.add(aJ);
                         }
+                        else{
+                            Agente aO = new Agente(content[4], tipoAgente.JOEPUBLIC);
+                            agentesJoePublic.remove(aO);
+                            agentesJoePublicLibres.remove(aO);
+                        }
                         
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
