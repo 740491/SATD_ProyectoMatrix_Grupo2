@@ -20,8 +20,8 @@ import java.util.Random;
 public class AgenteJoePublic extends Agent {
     
     //---------------------------------- CONSTANTES ----------------------------------
-    private final int MAX_TIMEOUTS = 1;
-    private final int TIMEOUT = 10000; //ms
+    private final int MAX_TIMEOUTS = 3;
+    private final int TIMEOUT = 5000; //ms
 
     
     public class JoePublic_behaviour extends CyclicBehaviour {
@@ -68,7 +68,7 @@ public class AgenteJoePublic extends Agent {
                     boolean recopilador_agree = false;
                     
                     int timeouts = MAX_TIMEOUTS;
-                    while(!recopilador_agree && timeouts >= 0){
+                    while(!recopilador_agree && timeouts > 0){
                         ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
 
                         // Si salta timeout -> respuesta = null
@@ -89,7 +89,7 @@ public class AgenteJoePublic extends Agent {
                     }
                     // esperar inform
                     boolean recopilador_inform = false;
-                    while(!recopilador_inform && timeouts >= 0){
+                    while(!recopilador_inform && timeouts > 0){
                         ACLMessage inform_respuesta = this.myAgent.blockingReceive(TIMEOUT);
 
                         // Si salta timeout -> inform_respuesta = null
@@ -111,8 +111,10 @@ public class AgenteJoePublic extends Agent {
                     ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
                     inform.addReceiver(mensaje.getSender());
                     if(timeouts == 0){
+                        System.out.println("ORACULEAMOS MAL");
                         inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name() + "," + MensajesComunes.tipoResultado.FRACASO.name());
                     }else{
+                        System.out.println("ORACULEAMOS BIEN");
                         inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name() + "," + MensajesComunes.tipoResultado.ORACULO.name());
 
                     }

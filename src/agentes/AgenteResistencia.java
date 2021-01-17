@@ -214,8 +214,8 @@ public class AgenteResistencia extends Agent {
                 }
             }
             else if(ACLMessage.REQUEST == mensaje.getPerformative() ){
-                System.out.println("Soy: " + this.myAgent.getName() + "y el agente " + mensaje.getSender().getLocalName() + " me envia REQUEST DE COMBATE: "  + mensaje.getContent());
                 String content[] = mensaje.getContent().split(",");
+                System.out.println("Soy: " + this.myAgent.getName() + " estoy: "+ ocupado + " y el agente " + mensaje.getSender().getLocalName() + " me envia REQUEST: "  + mensaje.getContent());
                 if(!ocupado){//Si estamos libres -> tratar
                     if(content[0].equals(tipoAccion.COMBATE.name())){ //Combate
                         //Confirmar

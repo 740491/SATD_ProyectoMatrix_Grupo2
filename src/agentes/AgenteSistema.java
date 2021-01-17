@@ -211,7 +211,8 @@ public class AgenteSistema extends Agent {
                 }
             }
             else if(ACLMessage.REQUEST == mensaje.getPerformative() ){
-                System.out.println("Soy: " + this.myAgent.getName() + "y el agente " + mensaje.getSender().getLocalName() + " me envia REQUEST DE COMBATE: "  + mensaje.getContent());
+                System.out.println("Soy: " + this.myAgent.getName() + " estoy ocupado: "+ ocupado + " y el agente " + mensaje.getSender().getLocalName() + " me envia REQUEST: "  + mensaje.getContent());
+
                 String content[] = mensaje.getContent().split(",");
                 
                 if(!ocupado){//Si estamos libres -> tratar
