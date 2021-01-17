@@ -484,6 +484,9 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
                         //el agente resistencia queda libre
                         Agente aR = new Agente(msg.getSender().getLocalName(), tipoAgente.RESISTENCIA);
                         agentesResistenciaLibres.add(aR);
+                        // agente Joe Public queda libre
+                        Agente aJ = new Agente(content[4], tipoAgente.JOEPUBLIC);
+                        agentesJoePublicLibres.add(aJ);
                         //registro el log
                         e = new Evento(agentesResistencia, agentesSistema, agentesJoePublic, tipoAccion.RECLUTAMIENTO, tipoResultado.FRACASO, msg.getSender().getLocalName(), content[4]);
                     }

@@ -63,7 +63,7 @@ public class Decisor {
     public tipoDecision estrategia_aleatoria(){
         Random rand = new Random();
         float prob = rand.nextFloat();
-        if(prob > 0.9){
+        if(prob > 0.6){
             return tipoDecision.COMBATE;
         }else{
             return tipoDecision.RECLUTAMIENTO;
