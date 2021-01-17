@@ -55,7 +55,7 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
     
     List<Evento> log;
     
-    AID resultado;
+    AID resultado =  = new AID("resultado", AID.ISLOCALNAME);;
    
 
     AgenteArquitectoManejador(List<Agente> agentesResistencia, List<Agente> agentesSistema, List<Agente> agentesJoePublic, List<Evento> log, ContainerController cc) {
@@ -234,9 +234,12 @@ public class AgenteArquitectoManejador extends CyclicBehaviour {
         if(agentesResistencia.isEmpty() || agentesSistema.isEmpty()){
             System.out.println("ES EL FINAL");
             boolean recopilador_agree = false;
+			
             ACLMessage mensaje_resultado = new ACLMessage(ACLMessage.REQUEST);
             mensaje_resultado.setContent(log.toString());
             mensaje_resultado.addReceiver(resultado);
+			this.myAgent.send(mensaje_resultado);
+			
             while(!recopilador_agree){
                 ACLMessage respuesta = this.myAgent.blockingReceive(TIMEOUT);
                 if(respuesta == null) this.myAgent.send(mensaje_resultado);

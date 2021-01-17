@@ -31,9 +31,11 @@ public class AgenteResultado extends GuiAgent {
                 }
                 
             }
+			
             ACLMessage agree = msg.createReply();
             agree.setPerformative(ACLMessage.AGREE);
             this.myAgent.send(agree);
+			
             jfrm.setVisible(true);//solo se muestra la interfaz cuando se ha recibo el mensaje
             String mensaje = msg.getContent();//Obtenemos el resultado
             jfrm.mostrarResultado(mensaje); //se llama la funcion mostrar resultado que se encuentra en el Jfrm
