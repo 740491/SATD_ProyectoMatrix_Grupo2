@@ -107,5 +107,4 @@ public class AgenteArquitecto extends Agent {
     protected void takeDown() {
         System.out.println("El agente " + getLocalName() + " muere");
     }
-    
 }

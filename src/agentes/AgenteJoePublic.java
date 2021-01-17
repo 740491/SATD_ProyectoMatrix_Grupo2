@@ -39,9 +39,7 @@ public class AgenteJoePublic extends Agent {
         * */
         @Override
         public void action(){
-            System.out.println("Hola me llamo :" + this.myAgent.getName());
             ACLMessage mensaje = myAgent.blockingReceive();           
-            System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
             if(ACLMessage.REQUEST == mensaje.getPerformative() ){
                 
                 ACLMessage agree = new ACLMessage(ACLMessage.AGREE);
@@ -109,7 +107,7 @@ public class AgenteJoePublic extends Agent {
                     
                     ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
                     inform.addReceiver(mensaje.getSender());
-                    inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name() + MensajesComunes.tipoResultado.ORACULO.name());
+                    inform.setContent(MensajesComunes.tipoAccion.CONOCERORACULO.name() + "," + MensajesComunes.tipoResultado.ORACULO.name());
                     System.out.println("Informar del oráculo");
                     this.myAgent.send(inform);
                     this.myAgent.doDelete();
@@ -117,8 +115,6 @@ public class AgenteJoePublic extends Agent {
                 else{
                     Random rand = new Random();
                     float prob = rand.nextFloat();
-                    System.out.println("Probabilidad de reclutar creada " + prob);
-                    System.out.println("EL CONTENT" + mensaje.getContent());
                     if(prob*100 < Integer.parseInt(content[2]) ){
                         /*Mando respuesta de reclutar*/
                         ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
@@ -132,13 +128,11 @@ public class AgenteJoePublic extends Agent {
                         ACLMessage respuesta = new ACLMessage(ACLMessage.INFORM);
                         respuesta.addReceiver(mensaje.getSender());
                         respuesta.setContent(MensajesComunes.tipoAccion.RECLUTAMIENTO.name() + "," + MensajesComunes.tipoResultado.FRACASO.name());
-                        System.out.println("Fracaso al reclutar.");
                         this.myAgent.send(respuesta);
                         if(content[1].equals(MensajesComunes.tipoAgente.SISTEMA.name())){
                             /*Se recibe el REQUEST del Agente Sistema*/
-                            System.out.println("El agente " + this.myAgent.getName() + " es de tipo " + content[0]);
+                            System.out.println("Fracaso al reclutar: El agente " + this.myAgent.getName() + " ha sido asesinado ");
                             this.myAgent.doDelete();
-                            System.out.println("Eliminado el agente.");
                         }
                     }
                 }
@@ -150,7 +144,6 @@ public class AgenteJoePublic extends Agent {
     {
         MessageTemplate protocolo = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);// Crear un MessageTemplate de tipo FIPA_REQUEST;
         MessageTemplate performativa = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);// Asignar una Performativa de tipo REQUEST al objeto MessageTemplate
-        MessageTemplate plantilla = MessageTemplate.and(protocolo,performativa); //Componer Plantilla con las anteriores
  
         this.addBehaviour(new JoePublic_behaviour());
     }

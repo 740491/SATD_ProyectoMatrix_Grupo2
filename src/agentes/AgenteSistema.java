@@ -160,7 +160,6 @@ public class AgenteSistema extends Agent {
                         request.setContent(tipoAccion.COMBATE + "," + tipoAgente.SISTEMA + "," + String.valueOf(bonus));
                         this.myAgent.send(request);
                 }else if(content[0].equals(tipoAgente.JOEPUBLIC.name())){
-                        System.out.println("EEEEE - Soy: " + this.myAgent.getName() + " e intento reclutar a : "  + content[1]);
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent(tipoAccion.RECLUTAMIENTO.name() + "," + tipoAgente.SISTEMA  + "," + String.valueOf(bonus));
@@ -182,14 +181,13 @@ public class AgenteSistema extends Agent {
             else if(ACLMessage.INFORM == mensaje.getPerformative() ){
                 ocupado = false; 
                 
-                System.out.println("Me llega el INFORM DEl COMBATE: "  + mensaje.getContent());
-                
                 String content[] = mensaje.getContent().split(",");
                 //Envíar resultado a arquitecto
                 avisar_arquitecto(tipoMensaje.RESULTADO.name() + "," + tipoAgente.SISTEMA.name() + "," +
                         content[0] + "," + content[1] + "," + mensaje.getSender().getLocalName());
                 
                 if(content[0].equals(tipoAccion.COMBATE.name())){
+                    System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl COMBATE: "  + mensaje.getContent());
                     ocupado = false;
                     if(content[1].equals(tipoResultado.EXITO.name())){
                         if(bonus < max_bonus) bonus++;
@@ -200,7 +198,9 @@ public class AgenteSistema extends Agent {
                         this.myAgent.doDelete();
                     }
                 }else if(content[0].equals(tipoAccion.RECLUTAMIENTO.name())){
+                    System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl RECLUTAMIENTO: "  + mensaje.getContent());
                 }else if(content[0].equals(tipoAccion.CONOCERORACULO.name())){
+                    System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl CONOCERORACULO: "  + mensaje.getContent());
                 }else {
                     System.out.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM inesperado: " + content[0]);
                 }

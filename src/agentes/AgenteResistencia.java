@@ -67,7 +67,7 @@ public class AgenteResistencia extends Agent {
                 if(respuesta == null) System.out.println("AGENTE SISTEMA/RESISTENCIA SE QUEDA PILLADO Y NO SE QUE HACER");
                 else if(ACLMessage.INFORM == respuesta.getPerformative()){
                     recopilador_inform = true;
-                    System.out.println("BIEN!! El arquitecto confirma");
+                    //System.out.println("BIEN!! El arquitecto confirma");
                 }
             }
         }
@@ -161,7 +161,6 @@ public class AgenteResistencia extends Agent {
                         request.setContent(tipoAccion.COMBATE + "," + tipoAgente.RESISTENCIA + "," + String.valueOf(bonus));
                         this.myAgent.send(request);
                 }else if(content[0].equals(tipoAgente.JOEPUBLIC.name())){
-                        System.out.println("EEEEE - Soy: " + this.myAgent.getName() + " e intento reclutar a : "  + content[1]);
                         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                         request.addReceiver(new AID(content[1], AID.ISLOCALNAME));
                         request.setContent(tipoAccion.RECLUTAMIENTO.name() + "," + tipoAgente.RESISTENCIA +  "," + String.valueOf(bonus));
@@ -186,12 +185,11 @@ public class AgenteResistencia extends Agent {
                 String content[] = mensaje.getContent().split(",");
                 //Envíar resultado a arquitecto TODO: COMPROBAR RECEPCION CON BUCLE
                 
-                System.out.println("Me llega el INFORM DEl COMBATE: "  + mensaje.getContent());
-                
                 avisar_arquitecto(tipoMensaje.RESULTADO.name() + "," + tipoAgente.RESISTENCIA.name() + "," +
                         content[0] + "," + content[1] + "," + mensaje.getSender().getLocalName());
                 
                 if(content[0].equals(tipoAccion.COMBATE.name())){
+                    System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl COMBATE: "  + mensaje.getContent());
                     ocupado = false;
                     if(content[1].equals(tipoResultado.EXITO.name())){
                         if(bonus < max_bonus) bonus++;
@@ -202,7 +200,9 @@ public class AgenteResistencia extends Agent {
                         this.myAgent.doDelete();
                     }
                 }else if(content[0].equals(tipoAccion.RECLUTAMIENTO.name())){
+                    System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl RECLUTAMIENTO: "  + mensaje.getContent());
                 }else if(content[0].equals(tipoAccion.CONOCERORACULO.name())){
+                    System.out.println("Soy: " + this.myAgent.getLocalName() + " y me llega el INFORM DEl CONOCERORACULO: "  + mensaje.getContent());
                 }else {
                     System.err.println("ERROR: El agente " + this.myAgent.getName() + " recibe INFORM inesperado: " + content[0]);
                 }
